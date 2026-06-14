@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Gestão de Provas — Colégio Bonaparte</title>
+<style>
+:root{--blue:#185FA5;--blue-l:#E6F1FB;--blue-d:#0C447C;--green:#3B6D11;--green-l:#EAF3DE;--amber:#BA7517;--amber-l:#FAEEDA;--red:#A32D2D;--red-l:#FCEBEB;--teal:#0F6E56;--teal-l:#E1F5EE;--purple:#3C3489;--purple-l:#EEEDFE;--border:#e5e7eb;--border2:#d1d5db;--bg:#fff;--bg2:#f7f8fa;--text:#1a1a1a;--text2:#6b7280;--r:8px;--rl:12px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;font-size:15px;color:var(--text);background:var(--bg2);min-height:100vh}
+.wrap{max-width:960px;margin:0 auto;padding:0 16px 48px}
+.topbar{background:var(--blue-d);color:#fff;padding:11px 0}
+.tbi{max-width:960px;margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.tbi-left{display:flex;align-items:center;gap:12px}
+.role-badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:700}
+.rb-admin{background:#FFD700;color:#1a1a1a}.rb-prof{background:#5DCAA5;color:#04342C}
+.screen{display:none;min-height:100vh}.screen.active{display:block}
+.login-page{min-height:100vh;display:flex;flex-direction:column}
+.login-hero{background:var(--blue-d);color:#fff;padding:40px 16px;text-align:center}
+.login-hero h2{font-size:22px;font-weight:700;margin-bottom:6px}
+.login-hero p{font-size:14px;opacity:.8}
+.login-cards{max-width:860px;margin:0 auto;padding:32px 16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+.login-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--rl);padding:28px 20px;text-align:center;cursor:pointer;transition:all .2s}
+.login-card:hover{border-color:var(--blue);transform:translateY(-2px);box-shadow:0 4px 20px rgba(0,0,0,.1)}
+.lc-icon{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+.lc-title{font-size:16px;font-weight:700;margin-bottom:6px}
+.lc-desc{font-size:13px;color:var(--text2);line-height:1.5}
+.lic-screen{min-height:80vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.lic-box{background:var(--bg);border:1px solid var(--border);border-radius:var(--rl);padding:36px 32px;max-width:420px;width:100%;text-align:center;box-shadow:0 4px 32px rgba(0,0,0,.08)}
+.lic-input{font-family:'Courier New',monospace;font-size:19px;letter-spacing:3px;text-align:center;font-weight:700;text-transform:uppercase;background:var(--bg2);width:100%;margin-bottom:14px;padding:12px;border:1px solid var(--border2);border-radius:var(--r)}
+.tw{background:var(--bg);border-bottom:1px solid var(--border)}
+.tabs{max-width:960px;margin:0 auto;padding:0 16px;display:flex;overflow-x:auto}
+.tab{padding:10px 14px;cursor:pointer;font-size:13px;border-bottom:2px solid transparent;color:var(--text2);background:none;border-top:none;border-left:none;border-right:none;white-space:nowrap;flex-shrink:0;font-weight:600;transition:all .15s}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue)}
+.sec{display:none;padding-top:20px}.sec.active{display:block}
+.card{background:var(--bg);border:1px solid var(--border);border-radius:var(--rl);padding:16px 20px;margin-bottom:14px}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.fr.full{grid-template-columns:1fr}.fr.t3{grid-template-columns:1fr 1fr 1fr}
+label{display:block;font-size:12px;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+input,select,textarea{width:100%;padding:8px 11px;border:1px solid var(--border2);border-radius:var(--r);font-size:14px;background:var(--bg);color:var(--text);font-family:inherit;transition:border .15s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(24,95,165,.1)}
+textarea{resize:vertical;min-height:70px;line-height:1.5}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--r);border:1px solid var(--border2);background:var(--bg);color:var(--text);cursor:pointer;font-size:14px;font-family:inherit;font-weight:600;transition:all .15s}
+.btn:hover{background:var(--bg2)}.btn:active{transform:scale(.98)}
+.bp{background:var(--blue);border-color:var(--blue);color:#fff}.bp:hover{background:var(--blue-d)}
+.bgg{background:var(--green);border-color:var(--green);color:#fff}.bgg:hover{background:#27500A}
+.bt{background:var(--teal);border-color:var(--teal);color:#fff}
+.bs{padding:5px 12px;font-size:12px}
+.bd{border-color:var(--red);color:var(--red)}.bd:hover{background:var(--red-l)}
+.bg3{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.stat{background:var(--bg);border:1px solid var(--border);border-radius:var(--rl);padding:14px;text-align:center}
+.sn{font-size:24px;font-weight:700;line-height:1.2}.sl{font-size:12px;color:var(--text2);margin-top:3px}
+.sep{height:1px;background:var(--border);margin:16px 0}
+.al{padding:10px 14px;border-radius:var(--r);font-size:13px;margin-bottom:12px;display:flex;align-items:flex-start;gap:8px;line-height:1.5}
+.aS{background:var(--green-l);color:#27500A;border:1px solid #C0DD97}
+.aE{background:var(--red-l);color:#791F1F;border:1px solid #F7C1C1}
+.aW{background:var(--amber-l);color:#633806;border:1px solid #FAC775}
+.aI{background:var(--blue-l);color:var(--blue-d);border:1px solid #85B7EB}
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700}
+.bb{background:var(--blue-l);color:var(--blue-d)}.bG{background:var(--green-l);color:var(--green)}.ba{background:var(--amber-l);color:#633806}.br{background:var(--red-l);color:var(--red)}.bgr{background:#F1EFE8;color:#444}.bp2{background:var(--purple-l);color:var(--purple)}.bT{background:var(--teal-l);color:var(--teal)}
+.filt{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.filt select{width:auto;padding:6px 10px;font-size:13px}
+.empty{text-align:center;padding:40px 16px;color:var(--text2)}.empty-icon{font-size:36px;display:block;margin-bottom:10px;opacity:.4}
+.pc{background:var(--bg);border:1px solid var(--border);border-radius:var(--rl);padding:14px 18px;margin-bottom:10px}
+.ph{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px;flex-wrap:wrap}
+.pmb{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}
+.pd{display:flex;gap:14px;font-size:12px;flex-wrap:wrap}
+.dok{color:var(--green)}.dwn{color:var(--amber)}.der{color:var(--red);font-weight:700}
+.tl{display:flex;gap:14px;margin-bottom:18px}
+.tld{min-width:48px;text-align:center;flex-shrink:0}
+.tday{font-size:28px;font-weight:700;line-height:1;color:var(--blue)}.tmo{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+.tlb{flex:1;padding-bottom:18px;border-bottom:1px solid var(--border)}.tl:last-child .tlb{border-bottom:none}
+.nl{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text2);margin:10px 0 6px}
+.tg{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.av{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+.pbp{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--bg);border:1px solid var(--border);border-radius:var(--rl);margin-bottom:16px;flex-wrap:wrap;gap:10px}
+.pw{position:relative}.pw input{padding-right:40px}
+.pwb{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text2);font-size:16px;padding:4px}
+.iz{border:2px dashed var(--border2);border-radius:var(--rl);padding:28px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg2)}
+.iz:hover,.iz.drag{border-color:var(--blue);background:var(--blue-l)}
+.fz{border:2px dashed var(--border2);border-radius:var(--r);padding:14px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg2);margin-top:8px}
+.fz:hover{border-color:var(--blue);background:var(--blue-l)}
+.farq{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--green-l);border:1px solid #C0DD97;border-radius:var(--r);margin-top:8px}
+.farq-pend{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--amber-l);border:1px solid #FAC775;border-radius:var(--r);margin-top:8px}
+.cfg-box{background:var(--blue-l);border:1px solid #85B7EB;border-radius:var(--rl);padding:16px 20px;margin-bottom:14px}
+.notif-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.notif-row:last-child{border-bottom:none}
+.tag-at{background:var(--red-l);color:var(--red);border:1px solid #F7C1C1;border-radius:var(--r);padding:3px 9px;font-size:11px;font-weight:700}
+.tag-hj{background:var(--amber-l);color:#633806;border:1px solid #FAC775;border-radius:var(--r);padding:3px 9px;font-size:11px;font-weight:700}
+.tag-ok{background:var(--green-l);color:var(--green);border:1px solid #C0DD97;border-radius:var(--r);padding:3px 9px;font-size:11px;font-weight:700}
+.aluno-hero{background:linear-gradient(135deg,var(--blue-d),var(--blue));color:#fff;padding:36px 16px;text-align:center}
+.aluno-hero h2{font-size:22px;font-weight:700;margin-bottom:6px}
+.aluno-body{max-width:760px;margin:0 auto;padding:24px 16px 48px}
+.wa-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:10px;background:#25D366;color:#fff;border-radius:8px;text-decoration:none;font-size:14px;font-weight:700;margin-bottom:8px;border:none;cursor:pointer}
+@media(max-width:640px){.login-cards{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.fr{grid-template-columns:1fr}.fr.t3{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<!-- ══ PORTAL ══ -->
+<div id="screen-portal" class="screen active">
+  <div class="topbar"><div class="tbi"><div class="tbi-left">
+    <svg width="150" height="38" viewBox="0 0 200 52" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8 48 Q2 28 14 10 Q20 2 30 2" stroke="#E05050" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <text x="34" y="18" font-family="Arial" font-size="10" fill="white" font-weight="600" letter-spacing="1">COLÉGIO</text>
+      <text x="32" y="38" font-family="Arial" font-size="22" fill="white" font-weight="900">BONAPARTE</text>
+    </svg>
+    <div style="margin-left:10px;padding-left:10px;border-left:1px solid rgba(255,255,255,.3)">
+      <div style="font-size:14px;font-weight:700">Gestão de Provas</div>
+      <div style="font-size:11px;opacity:.7">Sistema interno</div>
+    </div>
+  </div></div></div>
+  <div class="login-page">
+    <div class="login-hero"><h2>Bem-vindo ao sistema de provas</h2><p>Selecione seu perfil de acesso</p></div>
+    <div class="login-cards">
+      <div class="login-card" onclick="irAluno()">
+        <div class="lc-icon" style="background:var(--blue-l)">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#185FA5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        </div>
+        <div class="lc-title">Sou aluno</div>
+        <div class="lc-desc">Consulte datas e conteúdos das provas da sua turma</div>
+        <div style="margin-top:14px"><span class="btn bp bs" style="pointer-events:none">Acessar →</span></div>
+      </div>
+      <div class="login-card" onclick="irLogin('prof')">
+        <div class="lc-icon" style="background:var(--green-l)">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#3B6D11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        </div>
+        <div class="lc-title">Sou professor</div>
+        <div class="lc-desc">Envie conteúdos e arquivos das provas da sua disciplina</div>
+        <div style="margin-top:14px"><span class="btn bgg bs" style="pointer-events:none">Entrar →</span></div>
+      </div>
+      <div class="login-card" onclick="irLogin('admin')">
+        <div class="lc-icon" style="background:var(--amber-l)">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#BA7517" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="lc-title">Administrador</div>
+        <div class="lc-desc">Gerencie provas, professores e notificações</div>
+        <div style="margin-top:14px"><span class="btn bs" style="pointer-events:none;border-color:var(--amber);color:var(--amber)">Entrar →</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ LOGIN ══ -->
+<div id="screen-login" class="screen">
+  <div class="topbar"><div class="tbi">
+    <div class="tbi-left">
+      <svg width="140" height="34" viewBox="0 0 200 52" xmlns="http://www.w3.org/2000/svg"><path d="M8 48 Q2 28 14 10 Q20 2 30 2" stroke="#E05050" stroke-width="3" fill="none" stroke-linecap="round"/><text x="34" y="18" font-family="Arial" font-size="10" fill="white" font-weight="600" letter-spacing="1">COLÉGIO</text><text x="32" y="38" font-family="Arial" font-size="22" fill="white" font-weight="900">BONAPARTE</text></svg>
+    </div>
+    <button class="btn bs" onclick="irPortal()" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.3);color:#fff">← Voltar</button>
+  </div></div>
+  <!-- Token -->
+  <div id="lic-area"><div class="lic-screen"><div class="lic-box">
+    <div style="width:56px;height:56px;border-radius:50%;background:var(--blue-l);display:flex;align-items:center;justify-content:center;margin:0 auto 14px">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#185FA5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></rect></svg>
+    </div>
+    <div style="font-size:19px;font-weight:700;margin-bottom:6px">Ativação do sistema</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.6" id="lic-subtxt">Insira o token de acesso mensal para liberar o sistema.</div>
+    <div id="licAlert"></div>
+    <input class="lic-input" id="tkInp" placeholder="XXXXXX-XXXXXXXX" maxlength="15" autocomplete="off"/>
+    <button class="btn bp" id="licBtn" style="width:100%;justify-content:center;font-size:15px;padding:11px;margin-bottom:14px" onclick="checkToken()">🔓 Ativar sistema</button>
+    <div id="wa-btn-wrap">
+      <div style="font-size:12px;color:var(--text2);margin-bottom:8px">Precisa de um token? Fale com o administrador:</div>
+      <a class="wa-btn" href="https://wa.me/5544999656362?text=Ol%C3%A1%2C%20preciso%20do%20token%20de%20acesso%20ao%20sistema%20de%20Gest%C3%A3o%20de%20Provas%20do%20Col%C3%A9gio%20Bonaparte." target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Solicitar token via WhatsApp
+      </a>
+    </div>
+    <div id="wa-prof-msg" style="display:none;background:var(--blue-l);border:1px solid #85B7EB;border-radius:8px;padding:10px 14px;font-size:13px;color:var(--blue-d);line-height:1.6">
+      ℹ️ Não possui o token? Entre em contato com a <strong>Coordenação Pedagógica</strong> do Colégio Bonaparte.
+    </div>
+  </div></div></div>
+  <!-- Form login -->
+  <div id="login-form-area" style="display:none"><div class="lic-screen"><div class="lic-box">
+    <div id="login-icon" style="width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px"></div>
+    <div id="login-title" style="font-size:19px;font-weight:700;margin-bottom:4px"></div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:18px">Colégio Bonaparte</div>
+    <div id="login-alert"></div>
+    <div style="margin-bottom:12px"><label>Usuário</label><input id="login-u" placeholder="seu login" autocomplete="username"/></div>
+    <div style="margin-bottom:18px"><label>Senha</label>
+      <div class="pw"><input id="login-s" type="password" placeholder="sua senha" autocomplete="current-password"/>
+        <button class="pwb" onclick="tgS()" title="Mostrar/ocultar">👁</button>
+      </div>
+    </div>
+    <button class="btn bp" id="login-btn" style="width:100%;justify-content:center" onclick="doLogin()">🔐 Entrar</button>
+    <button class="btn bs" style="width:100%;justify-content:center;margin-top:8px" onclick="irPortal()">← Voltar ao início</button>
+  </div></div></div>
+</div>
+
+<!-- ══ ALUNO ══ -->
+<div id="screen-aluno" class="screen">
+  <div class="topbar"><div class="tbi">
+    <div class="tbi-left"><svg width="140" height="34" viewBox="0 0 200 52" xmlns="http://www.w3.org/2000/svg"><path d="M8 48 Q2 28 14 10 Q20 2 30 2" stroke="#E05050" stroke-width="3" fill="none" stroke-linecap="round"/><text x="34" y="18" font-family="Arial" font-size="10" fill="white" font-weight="600" letter-spacing="1">COLÉGIO</text><text x="32" y="38" font-family="Arial" font-size="22" fill="white" font-weight="900">BONAPARTE</text></svg></div>
+    <button class="btn bs" onclick="irPortal()" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.3);color:#fff">← Início</button>
+  </div></div>
+  <div class="aluno-hero"><h2>📅 Calendário de Provas</h2><p>Selecione sua turma para ver as datas e conteúdos</p></div>
+  <div class="aluno-body">
+    <div class="nl">Ensino Fundamental</div><div class="tg" id="tsf"></div>
+    <div class="nl">Ensino Médio</div><div class="tg" id="tsm"></div>
+    <div id="av"></div>
+  </div>
+</div>
+
+<!-- ══ APP INTERNO ══ -->
+<div id="screen-app" class="screen">
+  <div class="topbar"><div class="tbi">
+    <div class="tbi-left">
+      <svg width="140" height="34" viewBox="0 0 200 52" xmlns="http://www.w3.org/2000/svg"><path d="M8 48 Q2 28 14 10 Q20 2 30 2" stroke="#E05050" stroke-width="3" fill="none" stroke-linecap="round"/><text x="34" y="18" font-family="Arial" font-size="10" fill="white" font-weight="600" letter-spacing="1">COLÉGIO</text><text x="32" y="38" font-family="Arial" font-size="22" fill="white" font-weight="900">BONAPARTE</text></svg>
+      <span id="role-badge" class="role-badge"></span>
+      <span id="lic-badge" style="font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;display:none"></span>
+    </div>
+    <button class="btn bs" onclick="doLogout()" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.3);color:#fff">Sair →</button>
+  </div></div>
+  <div class="tw"><div class="tabs" id="app-tabs"></div></div>
+  <div class="wrap" id="app-content"></div>
+</div>
+
+<script>
+/* ══ CRIPTOGRAFIA ══ */
+const _SK="b7d09c9c9026b7e2ee865017513ff84d56b9ff174352a0a353b3b11441ca889e";
+function sha256(s){function rR(v,a){return(v>>>a)|(v<<(32-a))}const mP=Math.pow,mW=mP(2,32);let r='';const w=[];const aL=s.length*8;let h=[],k=[],pC=0;const iC={};for(let c=2;pC<64;c++){if(!iC[c]){for(let i=0;i<313;i+=c)iC[i]=c;h[pC]=(mP(c,.5)*mW)|0;k[pC++]=(mP(c,1/3)*mW)|0}}s+='\x80';while(s.length%64-56)s+='\x00';for(let i=0;i<s.length;i++){const j=s.charCodeAt(i);if(j>>8)return'';w[i>>2]|=j<<((3-i)%4)*8}w[w.length]=((aL/mW)|0);w[w.length]=(aL|0);for(let j=0;j<w.length;){const ww=w.slice(j,j+=16);const oH=h.slice(0);for(let i=0;i<64;i++){const w15=ww[i-15],w2=ww[i-2];const a=h[0],e=h[4];const t1=h[7]+(rR(e,6)^rR(e,11)^rR(e,25))+((e&h[5])^(~e&h[6]))+k[i]+(ww[i]=(i<16)?ww[i]:(ww[i-16]+(rR(w15,7)^rR(w15,18)^(w15>>>3))+ww[i-7]+(rR(w2,17)^rR(w2,19)^(w2>>>10)))|0);const t2=(rR(a,2)^rR(a,13)^rR(a,22))+((a&h[1])^(a&h[2])^(h[1]&h[2]));h=[(t1+t2)|0].concat(h);h[4]=(h[4]+t1)|0;h.length=8}for(let i=0;i<8;i++)h[i]=(h[i]+oH[i])|0}for(let i=0;i<8;i++){for(let j=3;j>=0;j--)r+=((h[i]>>(j*8))&255).toString(16).padStart(2,'0')}return r.toUpperCase()}
+function hmacS(key,msg){const bs=64;let kb=[];for(let i=0;i<key.length;i++)kb.push(key.charCodeAt(i));if(kb.length>bs){const hh=sha256(key);kb=[];for(let i=0;i<hh.length;i+=2)kb.push(parseInt(hh.substr(i,2),16))}while(kb.length<bs)kb.push(0);const ip=kb.map(b=>b^0x36),op=kb.map(b=>b^0x5c);const b2s=b=>b.map(x=>String.fromCharCode(x)).join('');const inn=sha256(b2s(ip)+msg);const ib=[];for(let i=0;i<inn.length;i+=2)ib.push(parseInt(inn.substr(i,2),16));return sha256(b2s(op)+b2s(ib))}
+function validateToken(token){const p=token.trim().toUpperCase().split('-');if(p.length!==2)return{ok:false,reason:'Formato inválido.'};const[salt,sig]=p;if(salt.length<4||sig.length<6)return{ok:false,reason:'Token inválido.'};const clients=['BONP','ESCO','CEJA','PRIV','FUND','MEDI','CUST'];const durs=[15,30,60,90];const hj=new Date();hj.setHours(0,0,0,0);const ab=hj.getFullYear();for(const cli of clients){for(let ano=ab-1;ano<=ab+2;ano++){for(let mes=1;mes<=12;mes++){for(const dur of durs){const payload=cli+'|'+ano+'|'+String(mes).padStart(2,'0')+'|'+dur;const exp=hmacS(_SK,salt+payload).slice(0,8);if(exp===sig){const ed=new Date(ano,mes-1,1);ed.setDate(ed.getDate()+dur);const dl=Math.round((ed-hj)/86400000);if(dl<0)return{ok:false,reason:'Token expirado em '+ed.toLocaleDateString('pt-BR')+'.'};return{ok:true,daysLeft:dl,expDate:ed.toISOString().split('T')[0]}}}}}}return{ok:false,reason:'Token inválido.'}}
+
+/* ══ DADOS ══ */
+const TM={fund:["6º A","6º B","7º A","7º B","8º A","8º B","9º A"],medio:["1º A","2º A","3º A"]};
+const NL={fund:"Fundamental",medio:"Médio"};
+const NM={"ensino fundamental":"fund","fundamental":"fund","ensino médio":"medio","médio":"medio","medio":"medio"};
+const SM={"aguardando envio":"aguardando","aguardando":"aguardando","recebida":"recebida","em revisão":"revisao","em revisao":"revisao","aprovada":"aprovada"};
+const SC={aguardando:{l:"Aguardando envio",c:"ba"},recebida:{l:"Recebida",c:"bb"},revisao:{l:"Em revisão",c:"bp2"},aprovada:{l:"Aprovada",c:"bG"}};
+const ADMIN={id:0,nome:"Administrador",usuario:"bonaparte",senha:"adminBon@2026",role:"admin"};
+let PRO=[
+  {id:1,nome:"Adrian Carvalho",usuario:"adrian",senha:"AdrianBon@2026",email:"adrian.carvalho@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:2,nome:"Adriana Bueno Mayer",usuario:"adriana",senha:"AdrianaBon@2026",email:"adriana.mayer@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:3,nome:"Ana Paula Bernes",usuario:"ana",senha:"AnaBon@2026",email:"ana.bernes@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:4,nome:"Andiara Maximiliano de Moura",usuario:"andiara",senha:"AndiaraBon@2026",email:"andiara.moura@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:5,nome:"Arthur Marroni Pereira",usuario:"arthur",senha:"ArthurBon@2026",email:"arthur.marroni@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:6,nome:"Bruna Akemi Okabayashi Hirataka",usuario:"bruna",senha:"BrunaBon@2026",email:"bruna.hirataka@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:7,nome:"Daniel de Almeida Kulevicz",usuario:"daniel",senha:"DanielBon@2026",email:"daniel.kulevicz@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:8,nome:"Danilo Corci",usuario:"danilo",senha:"DaniloBon@2026",email:"danilo.corci@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:9,nome:"Eduardo Alves de Oliveira",usuario:"eduardo",senha:"EduardoBon@2026",email:"eduardo.oliveira@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:10,nome:"Edvan Gomes da Silva Bandeira",usuario:"edvan",senha:"EdvanBon@2026",email:"edvan.bandeira@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:11,nome:"Fernando Uller",usuario:"fernando",senha:"FernandoBon@2026",email:"fernando.uller@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:12,nome:"Frederico Moreira Lara",usuario:"frederico",senha:"FredericoBon@2026",email:"frederico.lara@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:13,nome:"Gabriela Barbosa Navarro de Paula",usuario:"gabriela",senha:"GabrielaBon@2026",email:"gabriela.barbosa@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:14,nome:"Guilherme Bertolin Silva",usuario:"guilherme",senha:"GuilhermeBon@2026",email:"guilherme.silva@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:15,nome:"Guilherme Zambianco Quadros",usuario:"guilherme1",senha:"GuilhermeBon@2026",email:"guilherme.quadros@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:16,nome:"Guilherme França Fusco",usuario:"guilherme2",senha:"GuilhermeBon@2026",email:"guilherme.fusco@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:17,nome:"Herika Coutinho de Souza",usuario:"herika",senha:"HerikaBon@2026",email:"herika.souza@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:18,nome:"Ildinei Jose Casagrande",usuario:"ildinei",senha:"IldineiBon@2026",email:"ildinei.casagrande@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:19,nome:"Janaina Silva Castro",usuario:"janaina",senha:"JanainaBon@2026",email:"janaina.castro@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:20,nome:"Janaina de Oliveira Reis Toureiro",usuario:"janaina1",senha:"JanainaBon@2026",email:"janaina.toureiro@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:21,nome:"Josilene Cadamuro",usuario:"josilene",senha:"JosileneBon@2026",email:"josilene.cadamuro@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:22,nome:"João Carlos Saran",usuario:"joao",senha:"JoaoBon@2026",email:"joao.saran@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:23,nome:"João Edson Ferro",usuario:"joao1",senha:"JoaoBon@2026",email:"joao.ferro@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:24,nome:"Julia Maria Duarte Patricio de Oliveira",usuario:"julia",senha:"JuliaBon@2026",email:"julia.oliveira@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:25,nome:"Katiele Helena Preuss de Oliveira",usuario:"katiele",senha:"KatieleBon@2026",email:"katiele.preuss@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:26,nome:"Lucas Henrique Teixeira Garcete",usuario:"lucas",senha:"LucasBon@2026",email:"lucas.garcete@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:27,nome:"Marcela Rodrigues de Oliveira",usuario:"marcela",senha:"MarcelaBon@2026",email:"marcela.oliveira@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:28,nome:"Marcelo Bussola",usuario:"marcelo",senha:"MarceloBon@2026",email:"marcelo.bussola@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:29,nome:"Michele Cristina da Silva",usuario:"michele",senha:"MicheleBon@2026",email:"michele.silva@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:30,nome:"Patrícia Pereira de Souza Polido",usuario:"patricia",senha:"PatriciaBon@2026",email:"patricia.polido@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:31,nome:"Petterson Vieira",usuario:"petterson",senha:"PettersonBon@2026",email:"petterson@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:32,nome:"Rachel Nosomi Yanagihara Galvão",usuario:"rachel",senha:"RachelBon@2026",email:"rachel.galvao@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:33,nome:"Sulamythan Barbosa Zdepski Catuabo",usuario:"sulamythan",senha:"SulamythanBon@2026",email:"sulamythan.catuabo@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:34,nome:"Sérgio Aparecido Carneiro",usuario:"sergio",senha:"SergioBon@2026",email:"sergio@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:35,nome:"Thaiane Andressa da Silva Tizo",usuario:"thaiane",senha:"ThaianeBon@2026",email:"thaiane.tizo@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:36,nome:"Vanessa Leme Fadel Steinhauser",usuario:"vanessa",senha:"VanessaBon@2026",email:"vanessa.steinhauser@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:37,nome:"Vinicius Fagundes Fraire",usuario:"vinicius",senha:"ViniciusBon@2026",email:"vinicius.fraire@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:38,nome:"Vitória Estercio Zanoni",usuario:"vitoria",senha:"VitoriaBon@2026",email:"vitoria.zanoni@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:39,nome:"Waelce de Oliveira Enami",usuario:"waelce",senha:"WaelceBon@2026",email:"waelce.enami@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:40,nome:"Walter Gava Filho",usuario:"walter",senha:"WalterBon@2026",email:"walter.filho@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+  {id:41,nome:"Élida Vieira",usuario:"elida",senha:"ElidaBon@2026",email:"elida.vieira@colegiobonaparte.com",disciplinas:"",turmas:"",role:"prof"},
+];
+let nPid=42;
+let nPid=7;
+let PV=[
+  {id:1,disciplina:"Educação Digital",nivel:"medio",turma:"1º A",dataprova:"2026-07-10",prazoenvio:"2026-07-02",conteudo:"Segurança digital, IA e produção de conteúdo",professorId:1,status:"recebida",arquivo:null},
+  {id:2,disciplina:"Filosofia",nivel:"medio",turma:"2º A",dataprova:"2026-07-14",prazoenvio:"2026-07-04",conteudo:"Sofistas, Sócrates e o método socrático",professorId:1,status:"revisao",arquivo:null},
+  {id:3,disciplina:"Sociologia",nivel:"medio",turma:"3º A",dataprova:"2026-07-16",prazoenvio:"2026-07-06",conteudo:"",professorId:1,status:"aguardando",arquivo:null},
+  {id:4,disciplina:"Matemática",nivel:"fund",turma:"6º A",dataprova:"2026-07-10",prazoenvio:"2026-07-02",conteudo:"Números inteiros, potenciação e radiciação",professorId:2,status:"recebida",arquivo:null},
+  {id:5,disciplina:"Português",nivel:"fund",turma:"7º B",dataprova:"2026-07-14",prazoenvio:"2026-07-04",conteudo:"",professorId:3,status:"aguardando",arquivo:null},
+  {id:6,disciplina:"Ciências",nivel:"fund",turma:"8º A",dataprova:"2026-07-16",prazoenvio:"2026-07-06",conteudo:"",professorId:4,status:"aguardando",arquivo:null},
+  {id:7,disciplina:"História",nivel:"fund",turma:"9º A",dataprova:"2026-07-22",prazoenvio:"2026-07-12",conteudo:"Proclamação da República, Era Vargas",professorId:5,status:"revisao",arquivo:null},
+  {id:8,disciplina:"Física",nivel:"medio",turma:"3º A",dataprova:"2026-07-18",prazoenvio:"2026-07-08",conteudo:"Eletromagnetismo e indução magnética",professorId:6,status:"aprovada",arquivo:null},
+];
+let nId=10,logUser=null,selTA="6º A",pImp=[],_licOk=false,_licDays=0,_licExp="";
+const _arqT={};
+
+/* ══ NAVEGAÇÃO ══ */
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+id).classList.add('active')}
+function irPortal(){showScreen('portal')}
+function irAluno(){buildAluno();showScreen('aluno')}
+let _lt='prof';
+function irLogin(tipo){
+  _lt=tipo;
+  const isA=tipo==='admin';
+  document.getElementById('lic-area').style.display=_licOk?'none':'block';
+  document.getElementById('login-form-area').style.display=_licOk?'block':'none';
+  document.getElementById('licAlert').innerHTML='';
+  document.getElementById('login-alert').innerHTML='';
+  document.getElementById('login-u').value='';
+  document.getElementById('login-s').value='';
+  const wb=document.getElementById('wa-btn-wrap');
+  const wp=document.getElementById('wa-prof-msg');
+  if(wb)wb.style.display=isA?'block':'none';
+  if(wp)wp.style.display=isA?'none':'block';
+  document.getElementById('login-icon').innerHTML=isA
+    ?'<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#BA7517" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>'
+    :'<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#3B6D11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>';
+  document.getElementById('login-icon').style.background=isA?'var(--amber-l)':'var(--green-l)';
+  document.getElementById('login-title').textContent=isA?'Acesso — Administrador':'Acesso — Professor';
+  document.getElementById('login-btn').className='btn '+(isA?'bp':'bgg');
+  showScreen('login');
+  setTimeout(()=>{if(_licOk)document.getElementById('login-u').focus()},100);
+}
+function tgS(){const i=document.getElementById('login-s');if(!i)return;i.type=i.type==='password'?'text':'password'}
+function doLogin(){
+  const u=document.getElementById('login-u').value.trim(),s=document.getElementById('login-s').value;
+  let f=null;
+  if(_lt==='admin'){if(u===ADMIN.usuario&&s===ADMIN.senha)f={...ADMIN};else{sLgA('Usuário ou senha incorretos.','aE');return}}
+  else{f=PRO.find(p=>p.usuario===u&&p.senha===s);if(!f){sLgA('Usuário ou senha incorretos.','aE');return}}
+  logUser=f;buildApp();showScreen('app');
+}
+function sLgA(msg,cls){document.getElementById('login-alert').innerHTML='<div class="al '+cls+'">'+msg+'</div>'}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('screen-login').classList.contains('active'))doLogin()});
+function doLogout(){logUser=null;irPortal()}
+
+/* ══ TOKEN ══ */
+function sLA(msg,cls){document.getElementById('licAlert').innerHTML='<div class="al '+cls+'">'+msg+'</div>'}
+function checkToken(){
+  const raw=document.getElementById('tkInp').value.trim();
+  const btn=document.getElementById('licBtn');
+  if(!raw){sLA('Digite o token.','aW');return}
+  btn.disabled=true;btn.textContent='Verificando...';
+  setTimeout(()=>{
+    const r=validateToken(raw);
+    btn.disabled=false;btn.textContent='🔓 Ativar sistema';
+    if(!r.ok){sLA(r.reason,'aE');return}
+    _licOk=true;_licDays=r.daysLeft;_licExp=r.expDate;
+    document.getElementById('lic-area').style.display='none';
+    document.getElementById('login-form-area').style.display='block';
+    document.getElementById('login-u').focus();
+  },300);
+}
+
+/* ══ HELPERS ══ */
+function nT(t){return TM.fund.includes(t)?"fund":TM.medio.includes(t)?"medio":""}
+function tBC(t){return nT(t)==="fund"?"bT":"bp2"}
+function dD(ds){const n=new Date();n.setHours(0,0,0,0);return Math.round((new Date(ds+"T00:00:00")-n)/86400000)}
+function fD(ds){if(!ds)return"—";const[y,m,d]=ds.split("-");return d+"/"+m+"/"+y}
+function pCls(ds,st){if(st!=="aguardando")return"dok";const d=dD(ds);return d<0?"der":d<=3?"dwn":"dok"}
+function pL(ds){const d=dD(ds);if(d<0)return"Atrasado "+Math.abs(d)+"d";if(d===0)return"Vence hoje";if(d===1)return"Vence amanhã";return d+" dias"}
+function pN(id){const p=PRO.find(p=>p.id===id);return p?p.nome:"—"}
+function ini(n){return n.replace(/Prof[ao]?\.\s*/,"").split(" ").map(x=>x[0]).join("").slice(0,2).toUpperCase()}
+function fmtSz(b){if(b<1024)return b+" B";if(b<1048576)return(b/1024).toFixed(1)+" KB";return(b/1048576).toFixed(1)+" MB"}
+function sA(id,msg,cls){const e=document.getElementById(id);if(!e)return;e.innerHTML='<div class="al '+cls+'">'+msg+'</div>';if(cls==="aS")setTimeout(()=>{if(e)e.innerHTML=""},4000)}
+function utf(ni,ti){const n=document.getElementById(ni).value,s=document.getElementById(ti);s.innerHTML=n?TM[n].map(t=>'<option value="'+t+'">'+t+'</option>').join(""):'<option value="">Selecione o nível primeiro</option>'}
+function oFN(ni,ti){const n=document.getElementById(ni).value,s=document.getElementById(ti);s.innerHTML='<option value="">Todas as turmas</option>'+(n?TM[n].map(t=>'<option value="'+t+'">'+t+'</option>').join(""):"")}
+function uPS(){
+  const o='<option value="">Selecionar</option>'+PRO.map(p=>'<option value="'+p.id+'">'+p.nome+'</option>').join("");
+  const e=document.getElementById("fp");if(e)e.innerHTML=o;
+  const f=document.getElementById("flp");if(f)f.innerHTML='<option value="">Todos os professores</option>'+PRO.map(p=>'<option value="'+p.id+'">'+p.nome+'</option>').join("");
+  const r=document.getElementById("rp-prof");if(r)r.innerHTML='<option value="">Selecionar professor</option>'+PRO.map(p=>'<option value="'+p.id+'">'+p.nome+(p.disciplinas?' — '+p.disciplinas:'')+'</option>').join("");
+}
+
+/* ══ MODO DE CADASTRO ══ */
+function setModo(modo){
+  document.getElementById('bloco-rapido').style.display=modo==='rapido'?'block':'none';
+  document.getElementById('bloco-turma').style.display=modo==='turma'?'block':'none';
+  document.getElementById('bloco-manual').style.display=modo==='manual'?'block':'none';
+  document.getElementById('modoBtn1').className='btn bs'+(modo==='rapido'?' bp':'');
+  document.getElementById('modoBtn2').className='btn bs'+(modo==='turma'?' bt':'');
+  document.getElementById('modoBtn3').className='btn bs'+(modo==='manual'?' bp':'');
+}
+
+/* ══ CADASTRO RÁPIDO POR TURMA ══ */
+let _rtCards=[];
+
+function carregarProfsPorTurma(){
+  const turma=(document.getElementById('rt-turma')||{}).value||'';
+  const grid=document.getElementById('rt-profs-grid');
+  const wrap=document.getElementById('rt-profs-wrap');
+  const empty=document.getElementById('rt-empty');
+  const info=document.getElementById('rt-turma-info');
+  _rtCards=[];
+  if(grid)grid.innerHTML='';
+  if(wrap)wrap.style.display='none';
+  if(empty)empty.style.display='none';
+  if(info)info.style.display='none';
+  if(!turma)return;
+
+  const nivel=nT(turma);
+
+  // Mostra info da turma
+  if(info){
+    info.style.display='block';
+    info.innerHTML=
+      '<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--teal-l);border:1px solid #A0D9C8;border-radius:var(--r)">'
+      +'<span class="badge '+tBC(turma)+'" style="font-size:15px;padding:5px 14px">'+turma+'</span>'
+      +'<div><div style="font-size:14px;font-weight:700;color:var(--teal)">Ensino '+NL[nivel]+'</div>'
+      +'<div style="font-size:12px;color:var(--teal);margin-top:2px">Listando todos os professores que atuam nesta turma</div></div></div>';
+  }
+
+  // Encontra professores que atuam nesta turma
+  const prazo=(document.getElementById('rt-prazo')||{}).value||'';
+  const profsNaTurma=PRO.filter(p=>{
+    const ts=(p.turmas||'').split(',').map(t=>t.trim());
+    return ts.includes(turma);
+  });
+
+  if(!profsNaTurma.length){
+    if(empty){empty.style.display='block';empty.textContent='⚠️ Nenhum professor cadastrado para esta turma ainda. Cadastre os professores e associe-os a esta turma.'}
+    return;
+  }
+
+  // Para cada professor, lista suas disciplinas nesta turma
+  let html='';
+  profsNaTurma.forEach(prof=>{
+    const discs=(prof.disciplinas||'').split(',').map(d=>d.trim()).filter(Boolean);
+    if(!discs.length)return;
+    discs.forEach(disc=>{
+      const cid='rt_'+prof.id+'_'+disc.replace(/[\s\/]/g,'_')+'_'+turma.replace(/[\sº]/g,'_');
+      const jaCad=PV.some(p=>p.professorId===prof.id&&p.disciplina===disc&&p.turma===turma);
+      _rtCards.push({cid,disc,turma,nivel,pid:prof.id,profNome:prof.nome});
+      html+=`<div style="background:${jaCad?'var(--amber-l)':'var(--bg2)'};border:1px solid ${jaCad?'var(--amber)':'var(--border2)'};border-radius:var(--r);padding:12px">
+        <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:10px">
+          <input type="checkbox" id="chk_${cid}" ${jaCad?'':'checked'} style="width:17px;height:17px;cursor:pointer;flex-shrink:0;margin-top:2px"/>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:700">${disc}</div>
+            <div style="display:flex;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap">
+              <div class="av" style="width:22px;height:22px;background:var(--blue-l);color:var(--blue-d);font-size:10px;flex-shrink:0">${ini(prof.nome)}</div>
+              <span style="font-size:12px;color:var(--text2)">${prof.nome}</span>
+            </div>
+            ${jaCad?'<div style="font-size:10px;color:var(--amber);font-weight:700;margin-top:4px">⚠ Já cadastrada</div>':''}
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+          <div>
+            <label style="font-size:10px;color:var(--red);font-weight:700">📅 Data da prova *</label>
+            <input type="date" id="dt_${cid}" style="padding:5px 7px;font-size:12px;border-color:var(--border2)"
+              oninput="this.style.borderColor=this.value?'var(--green)':'var(--red)'"/>
+          </div>
+          <div>
+            <label style="font-size:10px">⏰ Prazo de envio *</label>
+            <input type="date" id="pz_${cid}" value="${prazo}" style="padding:5px 7px;font-size:12px"/>
+          </div>
+        </div>
+      </div>`;
+    });
+  });
+
+  if(!html){
+    if(empty){empty.style.display='block';empty.textContent='⚠️ Os professores desta turma não têm disciplinas cadastradas.'}
+    return;
+  }
+  if(grid)grid.innerHTML=html;
+  if(wrap)wrap.style.display='block';
+}
+
+function aplicarPrazoPadraoTurma(){
+  const prazo=(document.getElementById('rt-prazo')||{}).value||'';
+  if(!prazo)return;
+  _rtCards.forEach(c=>{const el=document.getElementById('pz_'+c.cid);if(el&&!el.value)el.value=prazo});
+}
+
+function marcarTodasTurma(val){
+  _rtCards.forEach(c=>{const el=document.getElementById('chk_'+c.cid);if(el)el.checked=val});
+}
+
+function salvarLoteTurma(){
+  if(!_rtCards.length){sA('rt-alert','Selecione uma turma primeiro.','aW');return}
+  let salvos=0,erros=[],pulados=0;
+  _rtCards.forEach(c=>{
+    const chk=document.getElementById('chk_'+c.cid);
+    if(!chk||!chk.checked){pulados++;return}
+    const dt=(document.getElementById('dt_'+c.cid)||{}).value||'';
+    const pz=(document.getElementById('pz_'+c.cid)||{}).value||'';
+    if(!dt){erros.push('<strong>'+c.disc+'</strong> ('+c.profNome+'): data da prova em branco');return}
+    if(!pz){erros.push('<strong>'+c.disc+'</strong> ('+c.profNome+'): prazo de envio em branco');return}
+    if(pz>=dt){erros.push('<strong>'+c.disc+'</strong> ('+c.profNome+'): prazo deve ser anterior à data');return}
+    PV.push({id:nId++,disciplina:c.disc,nivel:c.nivel,turma:c.turma,dataprova:dt,prazoenvio:pz,conteudo:'',professorId:c.pid,status:'aguardando',arquivo:null});
+    salvos++;
+  });
+  if(erros.length){sA('rt-alert','⚠️ Corrija os erros:<br>'+erros.map(e=>'• '+e).join('<br>'),'aE');return}
+  if(!salvos){sA('rt-alert','Nenhuma prova selecionada para salvar.','aW');return}
+  rST();rP();uPS();
+  sA('rt-alert','✅ '+salvos+' prova'+(salvos>1?'s cadastradas':'cadastrada')+' com sucesso!'+(pulados?' ('+pulados+' ignorada'+(pulados>1?'s':'')+')':''),'aS');
+  const st=document.getElementById('rt-turma');if(st)st.value='';
+  const sp=document.getElementById('rt-prazo');if(sp)sp.value='';
+  const wrap=document.getElementById('rt-profs-wrap');if(wrap)wrap.style.display='none';
+  const info=document.getElementById('rt-turma-info');if(info)info.style.display='none';
+  _rtCards=[];
+}
+
+/* ══ CADASTRO RÁPIDO ══ */
+// Armazena os cards ativos para salvarLote poder acessar
+let _rpCards=[];
+
+function carregarTurmasProfessor(){
+  const sel=document.getElementById('rp-prof');
+  const pid=parseInt(sel?sel.value:0);
+  const grid=document.getElementById('rp-turmas-grid');
+  const wrap=document.getElementById('rp-turmas-wrap');
+  const empty=document.getElementById('rp-empty');
+  const info=document.getElementById('rp-prof-info');
+  _rpCards=[];
+  if(grid)grid.innerHTML='';
+  if(wrap)wrap.style.display='none';
+  if(empty)empty.style.display='none';
+  if(info)info.style.display='none';
+  if(!pid)return;
+
+  const prof=PRO.find(p=>p.id===pid);
+  if(!prof)return;
+
+  const discs=(prof.disciplinas||'').split(',').map(d=>d.trim()).filter(Boolean);
+  const turmas=(prof.turmas||'').split(',').map(t=>t.trim()).filter(Boolean);
+
+  // Mostra resumo do professor
+  if(info){
+    info.style.display='block';
+    info.innerHTML=
+      '<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--green-l);border:1px solid #C0DD97;border-radius:var(--r)">'
+      +'<div class="av" style="width:36px;height:36px;background:var(--green);color:#fff;font-size:13px;flex-shrink:0">'+ini(prof.nome)+'</div>'
+      +'<div><div style="font-size:14px;font-weight:700">'+prof.nome+'</div>'
+      +'<div style="font-size:12px;color:var(--green);margin-top:2px">'
+      +(discs.length?'📚 '+discs.join(' · '):'<em>sem disciplinas cadastradas</em>')+'</div>'
+      +'<div style="font-size:12px;color:var(--green);margin-top:1px">'
+      +(turmas.length?'🏫 '+turmas.join(' · '):'<em>sem turmas cadastradas</em>')+'</div>'
+      +'</div></div>';
+  }
+
+  if(!discs.length||!turmas.length){
+    if(empty){
+      empty.style.display='block';
+      empty.textContent=!discs.length&&!turmas.length
+        ?'⚠️ Este professor não tem disciplinas nem turmas cadastradas.'
+        :!discs.length?'⚠️ Este professor não tem disciplinas cadastradas.'
+        :'⚠️ Este professor não tem turmas cadastradas.';
+    }
+    return;
+  }
+
+  const prazo=document.getElementById('rp-prazo')?document.getElementById('rp-prazo').value:'';
+
+  // Agrupa por turma: cada turma vira uma seção, com as disciplinas como sub-cards
+  // Ordena turmas: fundamental primeiro, médio depois
+  const fundTurmas=turmas.filter(t=>TM.fund.includes(t));
+  const medTurmas=turmas.filter(t=>TM.medio.includes(t));
+  const turmasOrdenadas=[...fundTurmas,...medTurmas];
+
+  let html='';
+  turmasOrdenadas.forEach(turma=>{
+    const nivel=nT(turma);
+    const corNivel=nivel==='fund'?'var(--teal)':'var(--purple)';
+    html+=`<div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--rl);padding:14px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)">
+        <span class="badge ${tBC(turma)}" style="font-size:13px;padding:4px 12px">${turma}</span>
+        <span style="font-size:11px;color:${corNivel};font-weight:700">${NL[nivel]||''}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px">`;
+
+    discs.forEach(disc=>{
+      const cid='rp_'+pid+'_'+disc.replace(/[\s\/]/g,'_')+'_'+turma.replace(/[\sº]/g,'_');
+      const jaCad=PV.some(p=>p.professorId===pid&&p.disciplina===disc&&p.turma===turma);
+      _rpCards.push({cid,disc,turma,nivel,pid});
+      html+=`<div style="background:${jaCad?'var(--amber-l)':'var(--bg2)'};border:1px solid ${jaCad?'var(--amber)':'var(--border2)'};border-radius:var(--r);padding:10px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <input type="checkbox" id="chk_${cid}" ${jaCad?'':'checked'} style="width:17px;height:17px;cursor:pointer;flex-shrink:0"/>
+          <div>
+            <div style="font-size:13px;font-weight:700">${disc}</div>
+            ${jaCad?'<div style="font-size:10px;color:var(--amber);font-weight:700">⚠ Já cadastrada</div>':''}
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+          <div>
+            <label style="font-size:10px;color:var(--red);font-weight:700">📅 Data da prova *</label>
+            <input type="date" id="dt_${cid}" style="padding:5px 7px;font-size:12px;border-color:var(--border2)"
+              oninput="this.style.borderColor=this.value?'var(--green)':'var(--red)'"/>
+          </div>
+          <div>
+            <label style="font-size:10px">⏰ Prazo de envio *</label>
+            <input type="date" id="pz_${cid}" value="${prazo}" style="padding:5px 7px;font-size:12px"/>
+          </div>
+        </div>
+      </div>`;
+    });
+    html+='</div></div>';
+  });
+
+  if(grid)grid.innerHTML=html;
+  if(wrap)wrap.style.display='block';
+}
+
+function aplicarPrazoPadrao(){
+  const prazo=document.getElementById('rp-prazo')?document.getElementById('rp-prazo').value:'';
+  if(!prazo)return;
+  _rpCards.forEach(c=>{
+    const el=document.getElementById('pz_'+c.cid);
+    if(el&&!el.value)el.value=prazo;
+  });
+}
+
+function marcarTodas(val){
+  _rpCards.forEach(c=>{
+    const el=document.getElementById('chk_'+c.cid);
+    if(el)el.checked=val;
+  });
+}
+
+function salvarLote(){
+  const pid=parseInt((document.getElementById('rp-prof')||{}).value||0);
+  if(!pid){sA('rp-alert','Selecione um professor.','aE');return}
+  if(!_rpCards.length){sA('rp-alert','Nenhuma turma disponível.','aW');return}
+  let salvos=0,erros=[],pulados=0;
+  _rpCards.forEach(c=>{
+    const chk=document.getElementById('chk_'+c.cid);
+    if(!chk||!chk.checked){pulados++;return}
+    const dt=(document.getElementById('dt_'+c.cid)||{}).value||'';
+    const pz=(document.getElementById('pz_'+c.cid)||{}).value||'';
+    if(!dt){erros.push('<strong>'+c.disc+' / '+c.turma+'</strong>: data da prova em branco');return}
+    if(!pz){erros.push('<strong>'+c.disc+' / '+c.turma+'</strong>: prazo de envio em branco');return}
+    if(pz>=dt){erros.push('<strong>'+c.disc+' / '+c.turma+'</strong>: prazo deve ser anterior à data da prova');return}
+    PV.push({id:nId++,disciplina:c.disc,nivel:c.nivel,turma:c.turma,dataprova:dt,prazoenvio:pz,conteudo:'',professorId:c.pid,status:'aguardando',arquivo:null});
+    salvos++;
+  });
+  if(erros.length){
+    sA('rp-alert','⚠️ Corrija os erros abaixo:<br>'+erros.map(e=>'• '+e).join('<br>'),'aE');return;
+  }
+  if(!salvos){sA('rp-alert','Nenhuma prova selecionada para salvar.','aW');return}
+  rST();rP();uPS();
+  sA('rp-alert','✅ '+salvos+' prova'+(salvos>1?'s cadastradas':'cadastrada')+' com sucesso!'+(pulados?' ('+pulados+' item'+(pulados>1?'s ignorados':' ignorado')+')':''),'aS');
+  // Reset
+  const sp=document.getElementById('rp-prof');if(sp)sp.value='';
+  const sz=document.getElementById('rp-prazo');if(sz)sz.value='';
+  const wrap=document.getElementById('rp-turmas-wrap');if(wrap)wrap.style.display='none';
+  const info=document.getElementById('rp-prof-info');if(info)info.style.display='none';
+  _rpCards=[];
+}
+
+/* ══ BUILD APP ══ */
+function buildApp(){
+  const isA=logUser.role==="admin";
+  document.getElementById('role-badge').textContent=isA?'Administrador':'Professor';
+  document.getElementById('role-badge').className='role-badge '+(isA?'rb-admin':'rb-prof');
+  const lb=document.getElementById('lic-badge');
+  if(_licDays<=5){lb.style.cssText='font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;display:inline-block;background:#FAEEDA;color:#633806';lb.textContent='⚠ '+_licDays+'d restantes';}
+  else{lb.style.cssText='font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;display:inline-block;background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.3)';lb.textContent='✓ até '+fD(_licExp);}
+  if(isA){
+    document.getElementById('app-tabs').innerHTML=
+      '<button class="tab active" onclick="sw(\'admin\')">🛡 Admin</button>'+
+      '<button class="tab" onclick="sw(\'imp\')">📂 Importar</button>'+
+      '<button class="tab" onclick="sw(\'notif\')">🔔 Notificações</button>'+
+      '<button class="tab" onclick="sw(\'cal\')">📅 Calendário</button>';
+    document.getElementById('app-content').innerHTML=
+      '<div id="tab-admin" class="sec active">'+hAdmin()+'</div>'+
+      '<div id="tab-imp" class="sec">'+hImp()+'</div>'+
+      '<div id="tab-notif" class="sec">'+hNotif()+'</div>'+
+      '<div id="tab-cal" class="sec"></div>';
+    uPS();rST();rP();rPR();chkAt();
+  }else{
+    document.getElementById('app-tabs').innerHTML='<button class="tab active">📋 Minhas provas</button>';
+    document.getElementById('app-content').innerHTML='<div id="tab-prof" class="sec active"></div>';
+    rPD();
+  }
+}
+function sw(t){
+  document.querySelectorAll('#app-tabs .tab').forEach((el,i)=>{const ns=["admin","imp","notif","cal"];el.classList.toggle("active",ns[i]===t)});
+  document.querySelectorAll('#app-content .sec').forEach(el=>el.classList.remove("active"));
+  const el=document.getElementById("tab-"+t);if(el)el.classList.add("active");
+  if(t==="notif"){rNotif();cCfg()}
+  if(t==="cal")rC();
+}
+
+/* ══ HTML PAINÉIS ══ */
+function hAdmin(){return`<div id="aa"></div><div class="stats" id="sr"></div>
+
+<!-- MODO DE CADASTRO -->
+<div class="card" style="padding:12px 16px;margin-bottom:14px">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+    <span style="font-size:13px;font-weight:700;color:var(--text2);margin-right:4px">Modo de cadastro:</span>
+    <button id="modoBtn1" class="btn bp bs" onclick="setModo('rapido')">⚡ Por professor</button>
+    <button id="modoBtn2" class="btn bs" onclick="setModo('turma')">🏫 Por turma</button>
+    <button id="modoBtn3" class="btn bs" onclick="setModo('manual')">✏️ Manual</button>
+  </div>
+</div>
+
+<!-- CADASTRO RÁPIDO -->
+<div id="bloco-rapido">
+<div class="card" style="border-color:var(--blue);border-width:2px">
+  <p style="font-size:14px;font-weight:700;margin-bottom:4px">⚡ Cadastro rápido por professor</p>
+  <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Selecione o professor — as turmas e disciplinas dele aparecem automaticamente. Informe a data de cada prova e salve tudo de uma vez.</p>
+  <div class="fr">
+    <div><label>Professor *</label>
+      <select id="rp-prof" onchange="carregarTurmasProfessor()">
+        <option value="">Selecionar professor</option>
+      </select>
+    </div>
+    <div><label>Prazo de envio padrão <span style="text-transform:none;font-weight:400;font-size:11px">(aplica a todos)</span></label>
+      <input id="rp-prazo" type="date" onchange="aplicarPrazoPadrao()"/>
+    </div>
+  </div>
+  <div id="rp-prof-info" style="display:none;margin-bottom:12px"></div>
+  <div id="rp-turmas-wrap" style="display:none">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+      <p style="font-size:13px;font-weight:700;color:var(--blue-d)">📋 Provas por turma</p>
+      <div class="bg3">
+        <button class="btn bs" onclick="marcarTodas(true)">✔ Marcar todas</button>
+        <button class="btn bs" onclick="marcarTodas(false)">✕ Desmarcar</button>
+      </div>
+    </div>
+    <div id="rp-turmas-grid" style="margin-bottom:14px"></div>
+    <div id="rp-alert"></div>
+    <button class="btn bp" onclick="salvarLote()">💾 Salvar provas selecionadas</button>
+  </div>
+  <div id="rp-empty" style="display:none;padding:16px;background:var(--amber-l);border:1px solid var(--amber);border-radius:var(--r);font-size:13px;color:#633806;margin-top:8px"></div>
+</div>
+</div>
+
+<!-- CADASTRO POR TURMA -->
+<div id="bloco-turma" style="display:none">
+<div class="card" style="border-color:var(--teal);border-width:2px">
+  <p style="font-size:14px;font-weight:700;margin-bottom:4px">🏫 Cadastro rápido por turma</p>
+  <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Selecione a turma — o sistema lista todos os professores que atuam nela com suas disciplinas. Informe as datas e salve tudo de uma vez.</p>
+  <div class="fr">
+    <div>
+      <label>Turma *</label>
+      <select id="rt-turma" onchange="carregarProfsPorTurma()">
+        <option value="">Selecionar turma</option>
+        <optgroup label="Ensino Fundamental">
+          ${TM.fund.map(t=>`<option value="${t}">${t}</option>`).join('')}
+        </optgroup>
+        <optgroup label="Ensino Médio">
+          ${TM.medio.map(t=>`<option value="${t}">${t}</option>`).join('')}
+        </optgroup>
+      </select>
+    </div>
+    <div>
+      <label>Prazo de envio padrão <span style="text-transform:none;font-weight:400;font-size:11px">(aplica a todos)</span></label>
+      <input id="rt-prazo" type="date" onchange="aplicarPrazoPadraoTurma()"/>
+    </div>
+  </div>
+  <div id="rt-turma-info" style="display:none;margin-bottom:12px"></div>
+  <div id="rt-profs-wrap" style="display:none">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+      <p style="font-size:13px;font-weight:700;color:var(--teal)">📋 Disciplinas e professores desta turma</p>
+      <div class="bg3">
+        <button class="btn bs" onclick="marcarTodasTurma(true)">✔ Marcar todas</button>
+        <button class="btn bs" onclick="marcarTodasTurma(false)">✕ Desmarcar</button>
+      </div>
+    </div>
+    <div id="rt-profs-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px;margin-bottom:14px"></div>
+    <div id="rt-alert"></div>
+    <button class="btn bt" onclick="salvarLoteTurma()">💾 Salvar provas selecionadas</button>
+  </div>
+  <div id="rt-empty" style="display:none;padding:14px;background:var(--amber-l);border:1px solid var(--amber);border-radius:var(--r);font-size:13px;color:#633806;margin-top:8px"></div>
+</div>
+</div>
+<div id="bloco-manual" style="display:none">
+<div class="card">
+<p style="font-size:14px;font-weight:700;margin-bottom:14px">✏️ Cadastrar prova manualmente</p>
+<div class="fr"><div><label>Disciplina *</label><input id="fd" placeholder="Ex: Matemática"/></div>
+<div><label>Nível *</label><select id="fn" onchange="utf('fn','ft')"><option value="">Selecionar</option><option value="fund">Ensino Fundamental</option><option value="medio">Ensino Médio</option></select></div></div>
+<div class="fr"><div><label>Turma *</label><select id="ft"><option value="">Selecione o nível primeiro</option></select></div>
+<div><label>Professor</label><select id="fp"><option value="">Selecionar</option></select></div></div>
+<div class="fr"><div><label>Data da prova *</label><input id="fdp" type="date"/></div>
+<div><label>Prazo de envio *</label><input id="fpe" type="date"/></div></div>
+<div class="fr full"><label>Conteúdos</label><textarea id="fc" placeholder="Pode ser preenchido depois pelo professor"></textarea></div>
+<div class="fr" style="margin-bottom:14px"><div><label>Status</label><select id="fs"><option value="aguardando">Aguardando envio</option><option value="recebida">Recebida</option><option value="revisao">Em revisão</option><option value="aprovada">Aprovada</option></select></div></div>
+<div class="bg3"><button class="btn bp" onclick="aP()">💾 Salvar prova</button><button class="btn" onclick="clF()">✕ Limpar</button></div>
+</div>
+</div>
+
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;margin-top:4px"><p style="font-size:14px;font-weight:700">Provas cadastradas</p></div>
+<div class="filt">
+<select id="fln" onchange="oFN('fln','flt');rP()"><option value="">Todos os níveis</option><option value="fund">Fundamental</option><option value="medio">Médio</option></select>
+<select id="flt" onchange="rP()"><option value="">Todas as turmas</option></select>
+<select id="fls" onchange="rP()"><option value="">Todos os status</option><option value="aguardando">Aguardando</option><option value="recebida">Recebida</option><option value="revisao">Em revisão</option><option value="aprovada">Aprovada</option></select>
+<select id="flp" onchange="rP()"><option value="">Todos os professores</option></select>
+</div><div id="lp"></div>
+<div class="sep"></div>
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+  <p style="font-size:14px;font-weight:700">👥 Professores</p>
+  <div class="bg3">
+    <button class="btn bs bp" onclick="sAP()">+ Adicionar</button>
+    <button class="btn bs bt" onclick="sIP()">📋 Importar lista</button>
+  </div>
+</div>
+<!-- IMPORTAR LISTA DE PROFESSORES -->
+<div id="imp-prof-wrap" style="display:none" class="card" style="border-color:var(--teal);border-width:2px">
+  <p style="font-size:14px;font-weight:700;margin-bottom:4px">📋 Importar lista de professores</p>
+  <p style="font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.6">Cole abaixo os nomes dos professores (um por linha). O sistema vai gerar automaticamente login e senha padrão.</p>
+  <div class="fr full">
+    <div>
+      <label>Lista de nomes <span style="text-transform:none;font-weight:400">(um por linha)</span></label>
+      <textarea id="imp-nomes" style="min-height:140px;font-size:14px;line-height:1.8" placeholder="Ana Maria Silva&#10;Carlos Eduardo Souza&#10;Juliana Ferreira&#10;Marcos Antônio Lima"></textarea>
+    </div>
+  </div>
+  <div class="bg3" style="margin-bottom:12px">
+    <button class="btn bt bs" onclick="previaImportProf()">👁 Pré-visualizar</button>
+    <button class="btn bs" onclick="document.getElementById('imp-nomes').value=''">✕ Limpar</button>
+  </div>
+  <div id="imp-prof-preview" style="display:none">
+    <div style="overflow-x:auto;margin-bottom:12px">
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead><tr style="background:var(--teal);color:#fff">
+          <th style="padding:8px 10px;text-align:left">✔</th>
+          <th style="padding:8px 10px;text-align:left">Nome completo</th>
+          <th style="padding:8px 10px;text-align:left">Login</th>
+          <th style="padding:8px 10px;text-align:left">Senha</th>
+          <th style="padding:8px 10px;text-align:left">E-mail</th>
+          <th style="padding:8px 10px;text-align:left">Situação</th>
+        </tr></thead>
+        <tbody id="imp-prof-tbody"></tbody>
+      </table>
+    </div>
+    <div id="imp-prof-alert"></div>
+    <div class="bg3">
+      <button class="btn bt" onclick="confirmarImportProf()">✔ Confirmar importação</button>
+      <button class="btn bs" onclick="cancelarImportProf()">Cancelar</button>
+    </div>
+  </div>
+</div>
+<div id="apf" style="display:none" class="card">
+  <div class="fr t3">
+    <div><label>Nome *</label><input id="nn" placeholder="Nome completo"/></div>
+    <div><label>Usuário *</label><input id="nu" placeholder="login"/></div>
+    <div><label>Senha *</label><input id="ns" type="password" placeholder="senha"/></div>
+  </div>
+  <div class="fr full" style="margin-bottom:12px">
+    <div><label>E-mail *</label><input id="ne" type="email" placeholder="prof@escola.com.br"/></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px">
+    <!-- DISCIPLINAS -->
+    <div>
+      <label style="margin-bottom:8px">Disciplinas *</label>
+      <div style="border:1px solid var(--border2);border-radius:var(--r);padding:10px;background:var(--bg2);display:flex;flex-direction:column;gap:6px;max-height:260px;overflow-y:auto">
+        ${['Arte','Biologia','Ciências','Educação Física','Filosofia','Física','Geografia','História','Inglês','Língua Portuguesa','Literatura','Matemática','Química','Redação','Sociologia','Outros'].map(d=>`
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;text-transform:none;letter-spacing:0;cursor:pointer;color:var(--text)">
+          <input type="checkbox" class="chk-disc" value="${d}" style="width:16px;height:16px;cursor:pointer;flex-shrink:0"/> ${d}
+        </label>`).join('')}
+      </div>
+      <div id="disc-sel" style="font-size:11px;color:var(--text2);margin-top:6px">Nenhuma selecionada</div>
+    </div>
+
+    <!-- TURMAS -->
+    <div>
+      <label style="margin-bottom:8px">Turmas *</label>
+      <div style="border:1px solid var(--border2);border-radius:var(--r);padding:10px;background:var(--bg2);max-height:260px;overflow-y:auto">
+        <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Ensino Fundamental</div>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px">
+          ${TM.fund.map(t=>`
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;text-transform:none;letter-spacing:0;cursor:pointer;color:var(--text)">
+            <input type="checkbox" class="chk-turma" value="${t}" style="width:16px;height:16px;cursor:pointer;flex-shrink:0"/> ${t}
+          </label>`).join('')}
+        </div>
+        <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Ensino Médio</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          ${TM.medio.map(t=>`
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;text-transform:none;letter-spacing:0;cursor:pointer;color:var(--text)">
+            <input type="checkbox" class="chk-turma" value="${t}" style="width:16px;height:16px;cursor:pointer;flex-shrink:0"/> ${t}
+          </label>`).join('')}
+        </div>
+      </div>
+      <div id="turma-sel" style="font-size:11px;color:var(--text2);margin-top:6px">Nenhuma selecionada</div>
+    </div>
+  </div>
+
+  <div class="bg3">
+    <button class="btn bp bs" onclick="aProf()">✔ Salvar professor</button>
+    <button class="btn bs" onclick="document.getElementById('apf').style.display='none'">Cancelar</button>
+  </div>
+</div><div id="lpr"></div>`}
+
+function hImp(){return`<div id="ai"></div>
+<div class="card"><p style="font-size:14px;font-weight:700;margin-bottom:4px">📊 Importar planilha de provas</p>
+<p style="font-size:13px;color:var(--text2);margin-bottom:14px">Use o arquivo <strong>03_modelo_importacao.csv</strong> deste pacote — abra no Excel, preencha e salve como .xlsx ou .csv</p>
+<div class="iz" id="iz" onclick="document.getElementById('fi').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="onDr(event)">
+<div style="font-size:36px;margin-bottom:10px">📤</div>
+<p style="font-weight:700;font-size:15px;margin-bottom:6px">Clique para selecionar ou arraste aqui</p>
+<p style="font-size:13px;color:var(--text2)">Aceita .xlsx, .xls, .csv — máx. 100 provas</p>
+</div>
+<input type="file" id="fi" accept=".xlsx,.xls,.csv" style="display:none" onchange="onFS(event)"/></div>
+<div id="pva" style="display:none"><div class="card">
+<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px">
+<div><p style="font-size:14px;font-weight:700" id="pvt">Pré-visualização</p><p style="font-size:13px;color:var(--text2)" id="pvs"></p></div>
+<div class="bg3" id="pvb"></div></div>
+<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px;margin-top:12px" id="pvtbl"></table></div>
+<div style="display:flex;gap:16px;margin-top:10px;font-size:12px;flex-wrap:wrap">
+<span><span style="display:inline-block;width:10px;height:10px;background:var(--green);border-radius:2px;margin-right:4px"></span>Válida</span>
+<span><span style="display:inline-block;width:10px;height:10px;background:var(--amber);border-radius:2px;margin-right:4px"></span>Já existe</span>
+<span><span style="display:inline-block;width:10px;height:10px;background:var(--red);border-radius:2px;margin-right:4px"></span>Erro</span>
+</div></div></div>`}
+
+function hNotif(){return`<div id="an"></div>
+<div class="cfg-box"><p style="font-size:14px;font-weight:700;margin-bottom:4px">⚙️ Configuração de e-mail (EmailJS)</p>
+<p style="font-size:12px;color:var(--blue-d);margin-bottom:12px;line-height:1.6">Crie conta gratuita em <strong>emailjs.com</strong> e preencha os campos abaixo para habilitar alertas automáticos.</p>
+<div class="fr t3"><div><label>Service ID</label><input id="ejs-sid" placeholder="service_xxxxxxx"/></div><div><label>Template ID</label><input id="ejs-tid" placeholder="template_xxxxxxx"/></div><div><label>Public Key</label><input id="ejs-key" placeholder="sua_public_key"/></div></div>
+<div class="fr"><div><label>Nome remetente</label><input id="ejs-from" value="Colégio Bonaparte"/></div><div><label>E-mail reply-to</label><input id="ejs-reply" placeholder="coord@escola.com.br"/></div></div>
+<div class="bg3"><button class="btn bp bs" onclick="svcEmail()">💾 Salvar</button><button class="btn bs bt" onclick="tstEmail()">📧 Testar</button></div></div>
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+<p style="font-size:14px;font-weight:700">⏰ Professores com prazo vencido</p>
+<div class="bg3"><button class="btn bp bs" onclick="envTodos()">📨 Notificar todos</button><button class="btn bs" onclick="rNotif()">↻ Atualizar</button></div></div>
+<div id="lista-notif"></div>`}
+
+/* ══ ADMIN — PROVAS ══ */
+function rST(){const t=PV.length,ag=PV.filter(p=>p.status==="aguardando").length,ap=PV.filter(p=>p.status==="aprovada").length,at=PV.filter(p=>p.status==="aguardando"&&dD(p.prazoenvio)<0).length;const el=document.getElementById("sr");if(!el)return;el.innerHTML='<div class="stat"><div class="sn">'+t+'</div><div class="sl">Total</div></div><div class="stat"><div class="sn" style="color:var(--amber)">'+ag+'</div><div class="sl">Aguardando</div></div><div class="stat"><div class="sn" style="color:var(--green)">'+ap+'</div><div class="sl">Aprovadas</div></div><div class="stat"><div class="sn" style="color:var(--red)">'+at+'</div><div class="sl">Vencidas</div></div>'}
+function rP(){const fn=document.getElementById("fln")||{value:""},ft=document.getElementById("flt")||{value:""},fs=document.getElementById("fls")||{value:""},fp=document.getElementById("flp")||{value:""};const l=PV.filter(p=>(!fn.value||p.nivel===fn.value)&&(!ft.value||p.turma===ft.value)&&(!fs.value||p.status===fs.value)&&(!fp.value||p.professorId===parseInt(fp.value))).sort((a,b)=>a.dataprova.localeCompare(b.dataprova));const el=document.getElementById("lp");if(!el)return;if(!l.length){el.innerHTML='<div class="empty"><div class="empty-icon">📋</div>Nenhuma prova encontrada</div>';return}el.innerHTML=l.map(p=>{const sc=SC[p.status]||{l:p.status,c:"bgr"},at=p.status==="aguardando"&&dD(p.prazoenvio)<0;return'<div class="pc"'+(at?' style="border-color:var(--red)"':'')+'>'+('<div class="ph"><div><div style="font-size:15px;font-weight:700">'+p.disciplina+'</div><div class="pmb"><span class="badge bgr" style="font-size:10px">'+(NL[p.nivel]||"")+'</span><span class="badge '+tBC(p.turma)+'">'+p.turma+'</span><span class="badge '+sc.c+'">'+sc.l+'</span><span class="badge bgr" style="font-weight:500">'+pN(p.professorId)+'</span></div></div><div class="bg3"><select style="padding:5px 8px;font-size:12px;width:auto" onchange="uSt('+p.id+',this.value)">'+Object.entries(SC).map(([k,v])=>'<option value="'+k+'"'+(p.status===k?" selected":"")+'>'+v.l+'</option>').join("")+'</select><button class="btn bs bd" onclick="dP('+p.id+')" title="Remover">🗑</button></div></div>')+(p.conteudo?'<p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:10px">'+p.conteudo+'</p>':'<p style="font-size:13px;color:var(--amber);margin-bottom:10px">⚠ Conteúdo pendente</p>')+'<div class="pd"><span class="dok"><strong>Prova:</strong> '+fD(p.dataprova)+'</span><span class="'+pCls(p.prazoenvio,p.status)+'"><strong>Envio até:</strong> '+fD(p.prazoenvio)+' '+(p.status==="aguardando"?"("+pL(p.prazoenvio)+")":"✓")+'</span></div></div>'}).join("")}
+function aP(){const d=document.getElementById("fd").value.trim(),n=document.getElementById("fn").value,t=document.getElementById("ft").value,dp=document.getElementById("fdp").value,pe=document.getElementById("fpe").value;if(!d||!n||!t||!dp||!pe){sA("aa","Preencha os campos obrigatórios.","aE");return}if(pe>=dp){sA("aa","O prazo de envio deve ser anterior à data da prova.","aE");return}PV.push({id:nId++,disciplina:d,nivel:n,turma:t,dataprova:dp,prazoenvio:pe,conteudo:document.getElementById("fc").value.trim(),professorId:parseInt(document.getElementById("fp").value)||null,status:document.getElementById("fs").value,arquivo:null});clF();rST();rP();sA("aa","✅ Prova cadastrada com sucesso!","aS")}
+function clF(){["fd","fc","fdp","fpe"].forEach(id=>{const e=document.getElementById(id);if(e)e.value=""});["fn","ft","fs"].forEach(id=>{const e=document.getElementById(id);if(e)e.value=""})}
+function dP(id){if(confirm("Remover esta prova?"))PV=PV.filter(p=>p.id!==id),rST(),rP()}
+function uSt(id,s){const p=PV.find(p=>p.id===id);if(p)p.status=s;rST();rP()}
+function sIP(){
+  const w=document.getElementById('imp-prof-wrap');
+  if(!w)return;
+  w.style.display=w.style.display==='none'?'block':'none';
+  document.getElementById('imp-prof-preview').style.display='none';
+  document.getElementById('imp-prof-alert').innerHTML='';
+}
+
+let _impProfData=[];
+
+function gerarLogin(nome){
+  // Primeiro nome, minúsculas, sem acentos
+  return nome.trim().split(/\s+/)[0]
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^a-z0-9]/g,'');
+}
+
+function gerarSenha(nome){
+  const primeiro=nome.trim().split(/\s+/)[0];
+  const limpo=primeiro.charAt(0).toUpperCase()+primeiro.slice(1).toLowerCase();
+  return limpo.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9]/g,'')+'Bon@2026';
+}
+
+function previaImportProf(){
+  const raw=document.getElementById('imp-nomes').value;
+  const linhas=raw.split('\n').map(l=>l.trim()).filter(l=>l.length>0);
+  if(!linhas.length){sA('imp-prof-alert','Cole pelo menos um nome na lista.','aW');return}
+
+  _impProfData=[];
+  const tbody=document.getElementById('imp-prof-tbody');
+  let html='';
+
+  linhas.forEach((nome,i)=>{
+    // Capitaliza cada palavra
+    const nomeFormatado=nome.split(' ').map(p=>p.charAt(0).toUpperCase()+p.slice(1).toLowerCase()).join(' ');
+    const login=gerarLogin(nome);
+    const senha=gerarSenha(nome);
+
+    // Verifica duplicidade
+    const dupLogin=PRO.find(p=>p.usuario===login)||login===ADMIN.usuario;
+    const dupNome=PRO.find(p=>p.nome.toLowerCase()===nomeFormatado.toLowerCase());
+    const sit=dupNome?'dup-nome':dupLogin?'dup-login':'ok';
+    const sitLabel=dupNome?'⚠ Nome já existe':dupLogin?'⚠ Login em uso':'✅ Pronto';
+    const sitColor=sit==='ok'?'var(--green)':(sit==='dup-login'?'var(--red)':'var(--amber)');
+    const rowBg=sit==='ok'?'':'var(--amber-l)';
+
+    _impProfData.push({id:'ip_'+i,nome:nomeFormatado,login,senha,sit});
+
+    html+=`<tr style="background:${rowBg};border-left:3px solid ${sitColor}">
+      <td style="padding:7px 10px;border-bottom:1px solid var(--border)">
+        <input type="checkbox" id="chk_ip_${i}" ${sit==='ok'?'checked':''} style="width:16px;height:16px;cursor:pointer"/>
+      </td>
+      <td style="padding:7px 10px;border-bottom:1px solid var(--border);font-weight:700">${nomeFormatado}</td>
+      <td style="padding:7px 10px;border-bottom:1px solid var(--border);font-family:monospace;color:var(--blue-d)">${login}</td>
+      <td style="padding:7px 10px;border-bottom:1px solid var(--border);font-family:monospace;color:var(--text2)">${senha}</td>
+      <td style="padding:7px 10px;border-bottom:1px solid var(--border)">
+        <input id="email_ip_${i}" placeholder="${login}@colegiobonaparte.com.br" style="padding:5px 8px;font-size:12px;min-width:220px"/>
+      </td>
+      <td style="padding:7px 10px;border-bottom:1px solid var(--border);font-size:12px;font-weight:700;color:${sitColor}">${sitLabel}</td>
+    </tr>`;
+  });
+
+  tbody.innerHTML=html;
+  document.getElementById('imp-prof-preview').style.display='block';
+  document.getElementById('imp-prof-alert').innerHTML='';
+}
+
+function confirmarImportProf(){
+  let salvos=0,pulados=0,erros=[];
+  _impProfData.forEach((p,i)=>{
+    const chk=document.getElementById('chk_ip_'+i);
+    if(!chk||!chk.checked){pulados++;return}
+    if(p.sit!=='ok'&&p.sit!=='dup-login'){
+      // dup-nome: pula mas conta
+      pulados++;return;
+    }
+    if(p.sit==='dup-login'){erros.push(p.nome+': login "'+p.login+'" já está em uso');return}
+    const emailEl=document.getElementById('email_ip_'+i);
+    const email=emailEl?emailEl.value.trim():'';
+    PRO.push({
+      id:nPid++,
+      nome:p.nome,
+      usuario:p.login,
+      senha:p.senha,
+      email:email||'',
+      disciplinas:'',
+      turmas:'',
+      role:'prof'
+    });
+    salvos++;
+  });
+  if(erros.length){
+    sA('imp-prof-alert','⚠️ Alguns itens não foram importados:<br>'+erros.map(e=>'• '+e).join('<br>'),'aW');
+  }
+  if(salvos>0){
+    uPS();rPR();
+    sA('aa','✅ '+salvos+' professor'+(salvos>1?'es importados':' importado')+' com sucesso! Complete as disciplinas e turmas no cadastro de cada um.','aS');
+    document.getElementById('imp-nomes').value='';
+    document.getElementById('imp-prof-preview').style.display='none';
+    document.getElementById('imp-prof-wrap').style.display='none';
+    _impProfData=[];
+  }
+}
+
+function cancelarImportProf(){
+  document.getElementById('imp-prof-preview').style.display='none';
+  document.getElementById('imp-nomes').value='';
+  _impProfData=[];
+}
+  const f=document.getElementById("apf");
+  if(!f)return;
+  const show=f.style.display==="none";
+  f.style.display=show?"block":"none";
+  if(show){
+    // Reset checkboxes e contadores ao abrir
+    document.querySelectorAll('.chk-disc,.chk-turma').forEach(c=>c.checked=false);
+    atualizarContadores();
+    // Listeners de contagem
+    document.querySelectorAll('.chk-disc').forEach(c=>c.addEventListener('change',atualizarContadores));
+    document.querySelectorAll('.chk-turma').forEach(c=>c.addEventListener('change',atualizarContadores));
+  }
+}
+
+function atualizarContadores(){
+  const discs=[...document.querySelectorAll('.chk-disc:checked')].map(c=>c.value);
+  const turmas=[...document.querySelectorAll('.chk-turma:checked')].map(c=>c.value);
+  const dEl=document.getElementById('disc-sel');
+  const tEl=document.getElementById('turma-sel');
+  if(dEl)dEl.textContent=discs.length?'✔ '+discs.join(', '):'Nenhuma selecionada';
+  if(tEl)tEl.textContent=turmas.length?'✔ '+turmas.join(', '):'Nenhuma selecionada';
+}
+
+function aProf(){
+  const n=document.getElementById("nn").value.trim();
+  const u=document.getElementById("nu").value.trim();
+  const s=document.getElementById("ns").value.trim();
+  const e=document.getElementById("ne").value.trim();
+  const discs=[...document.querySelectorAll('.chk-disc:checked')].map(c=>c.value);
+  const turmas=[...document.querySelectorAll('.chk-turma:checked')].map(c=>c.value);
+  if(!n||!u||!s||!e){sA("aa","Preencha nome, usuário, senha e e-mail.","aE");return}
+  if(!discs.length){sA("aa","Selecione pelo menos uma disciplina.","aE");return}
+  if(!turmas.length){sA("aa","Selecione pelo menos uma turma.","aE");return}
+  if(PRO.find(p=>p.usuario===u)||u===ADMIN.usuario){sA("aa","Usuário já existe.","aE");return}
+  PRO.push({id:nPid++,nome:n,usuario:u,senha:s,email:e,disciplinas:discs.join(', '),turmas:turmas.join(', '),role:"prof"});
+  ["nn","nu","ns","ne"].forEach(id=>{const el=document.getElementById(id);if(el)el.value=""});
+  document.querySelectorAll('.chk-disc,.chk-turma').forEach(c=>c.checked=false);
+  atualizarContadores();
+  document.getElementById("apf").style.display="none";
+  uPS();rPR();sA("aa","✅ Professor cadastrado com sucesso!","aS");
+}
+function dProf(id){if(confirm("Remover este professor?"))PRO=PRO.filter(p=>p.id!==id),uPS(),rPR()}
+function rPR(){const el=document.getElementById("lpr");if(!el)return;if(!PRO.length){el.innerHTML='<div class="empty"><div class="empty-icon">👤</div>Nenhum professor cadastrado</div>';return}el.innerHTML=PRO.map(p=>{const at=PV.filter(x=>x.professorId===p.id&&x.status==="aguardando"&&dD(x.prazoenvio)<0).length,hj=PV.filter(x=>x.professorId===p.id&&x.status==="aguardando"&&dD(x.prazoenvio)===0).length;return'<div class="pc" style="padding:12px 16px'+(at>0?';border-color:var(--red)':hj>0?';border-color:var(--amber)':'')+'">'+'<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">'+'<div style="display:flex;align-items:center;gap:10px"><div class="av" style="width:36px;height:36px;background:var(--blue-l);color:var(--blue-d);font-size:12px">'+ini(p.nome)+'</div>'+'<div><div style="font-size:14px;font-weight:700">'+p.nome+'</div><div style="font-size:12px;color:var(--text2)">📧 '+(p.email||'<em>sem e-mail</em>')+(p.disciplinas?' · '+p.disciplinas:'')+'</div></div></div>'+'<div class="bg3">'+(at>0?'<span class="tag-at">'+at+'d atrasada'+(at>1?'s':'')+'</span>':'')+(hj>0?'<span class="tag-hj">vence hoje</span>':'')+(p.email?'<button class="btn bs bp" onclick="envAlerta('+p.id+')" title="Notificar por e-mail">📨 Notificar</button>':'')+'<button class="btn bs bd" onclick="dProf('+p.id+')" title="Remover">🗑</button></div></div></div>'}).join("")}
+
+/* ══ IMPORTAÇÃO ══ */
+function pED(v){if(!v)return null;if(typeof v==="number"){try{const dt=new Date(Math.round((v-25569)*86400*1000));if(!isNaN(dt))return dt.getFullYear()+"-"+String(dt.getMonth()+1).padStart(2,"0")+"-"+String(dt.getDate()).padStart(2,"0")}catch(e){}}const s=String(v).trim();const m=s.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);if(m)return m[3]+"-"+m[2]+"-"+m[1];if(s.match(/^\d{4}-\d{2}-\d{2}$/))return s;return null}
+function nNiv(v){return NM[(v||"").toLowerCase().trim()]||null}
+function nTrm(v){const s=(v||"").toString().trim();return[...TM.fund,...TM.medio].find(t=>t===s||t.replace("º","o")===s.replace("º","o"))||null}
+function nSt(v){return SM[(v||"").toLowerCase().trim()]||"aguardando"}
+function onDr(e){e.preventDefault();document.getElementById("iz").classList.remove("drag");const f=e.dataTransfer.files[0];if(f)pF(f)}
+function onFS(e){const f=e.target.files[0];if(f)pF(f);e.target.value=""}
+function pF(file){
+  const isCsv=file.name.match(/\.csv$/i);
+  const r=new FileReader();
+  if(isCsv){
+    r.onload=e=>{pCSV(e.target.result,file.name)};
+    r.readAsText(file,'UTF-8');
+  }else{
+    if(!window.XLSX){sA("ai","Para importar .xlsx, abra o sistema online. Use o arquivo .csv do pacote para importação local.","aW");return}
+    r.onload=e=>{try{const wb=window.XLSX.read(e.target.result,{type:"binary"});let ws=null;for(const n of wb.SheetNames){if(n.toLowerCase().includes("cadastro")||n.toLowerCase().includes("prova")){ws=wb.Sheets[n];break}}if(!ws)ws=wb.Sheets[wb.SheetNames[0]];pRows(window.XLSX.utils.sheet_to_json(ws,{header:1,defval:"",raw:true}),file.name)}catch(err){sA("ai","Erro ao ler o arquivo.","aE")}};
+    r.readAsBinaryString(file);
+  }
+}
+function pCSV(txt,fname){
+  const lines=txt.split(/\r?\n/);
+  const rows=lines.map(l=>{const r=[];let cur='',inQ=false;for(let i=0;i<l.length;i++){const c=l[i];if(c==='"'){inQ=!inQ}else if(c===','&&!inQ){r.push(cur.trim());cur=''}else{cur+=c}}r.push(cur.trim());return r});
+  pRows(rows,fname);
+}
+function pRows(rows,fname){
+  const hi=rows.findIndex(r=>r.some(c=>String(c).toLowerCase().includes("disciplina")));
+  if(hi===-1){sA("ai","Cabeçalho não encontrado. Verifique se a primeira linha tem 'Disciplina'.","aE");return}
+  const hd=rows[hi].map(h=>String(h).toLowerCase().trim());
+  const ix={disc:hd.findIndex(h=>h.includes("disciplina")),niv:hd.findIndex(h=>h.includes("nível")||h.includes("nivel")),trm:hd.findIndex(h=>h.includes("turma")),prf:hd.findIndex(h=>h.includes("professor")),dp:hd.findIndex(h=>h.includes("data")),pe:hd.findIndex(h=>h.includes("prazo")||h.includes("envio")),st:hd.findIndex(h=>h.includes("status")),ct:hd.findIndex(h=>h.includes("conte"))};
+  const parsed=[];
+  for(let i=hi+1;i<rows.length;i++){const r=rows[i];if(r.every(c=>c===""||c===null||c===undefined))continue;const disc=(ix.disc>=0?r[ix.disc]||"":"").toString().trim();if(!disc||disc.startsWith("="))continue;const niv=nNiv((ix.niv>=0?r[ix.niv]||"":"").toString()),trm=nTrm((ix.trm>=0?r[ix.trm]||"":"").toString()),dp=pED(ix.dp>=0?r[ix.dp]:""),pe=pED(ix.pe>=0?r[ix.pe]:""),errs=[];if(!niv)errs.push("nível inválido");if(!trm)errs.push("turma inválida");if(!dp)errs.push("data inválida");if(!pe)errs.push("prazo inválido");const isDup=PV.some(p=>p.disciplina.toLowerCase()===disc.toLowerCase()&&p.turma===trm&&p.dataprova===dp);const prfR=(ix.prf>=0?r[ix.prf]||"":"").toString();const prfObj=PRO.find(p=>p.nome.toLowerCase().includes(prfR.toLowerCase().replace(/prof[ao]?\.\s*/,"").trim()))||null;parsed.push({row:i+1,disc,niv,trm,prfId:prfObj?prfObj.id:null,dp,pe,status:nSt((ix.st>=0?r[ix.st]||"":"").toString()),ct:(ix.ct>=0?(r[ix.ct]||"").toString().trim():""),errs,isDup})}
+  if(!parsed.length){sA("ai","Nenhuma linha de dados encontrada.","aW");return}
+  pImp=parsed;rPV(fname);
+}
+function rPV(fname){const ok=pImp.filter(r=>!r.errs.length&&!r.isDup).length,er=pImp.filter(r=>r.errs.length).length,du=pImp.filter(r=>r.isDup&&!r.errs.length).length;document.getElementById("pvt").textContent="Pré-visualização — "+fname;document.getElementById("pvs").textContent=pImp.length+" linhas · "+ok+" válidas · "+du+" duplicadas · "+er+" com erro";document.getElementById("pvb").innerHTML=ok>0?'<button class="btn bgg bs" onclick="cImp()">✔ Importar '+ok+' prova'+(ok>1?"s":"")+'</button><button class="btn bs" onclick="canImp()">Cancelar</button>':'<button class="btn bs" onclick="canImp()">Fechar</button>';const hdr='<thead><tr style="background:var(--blue);color:#fff"><th style="padding:7px 9px">#</th><th style="padding:7px 9px">Disciplina</th><th style="padding:7px 9px">Nível</th><th style="padding:7px 9px">Turma</th><th style="padding:7px 9px">Data</th><th style="padding:7px 9px">Prazo</th><th style="padding:7px 9px">Situação</th></tr></thead>';document.getElementById("pvtbl").innerHTML=hdr+'<tbody>'+pImp.map(r=>{const bc=r.errs.length?"var(--red)":r.isDup?"var(--amber)":"var(--green)";const sit=r.errs.length?'❌ '+r.errs.join(", "):r.isDup?'⚠ Já existe':'✅ Pronta';return'<tr style="border-left:3px solid '+bc+'"><td style="padding:6px 9px;border-bottom:1px solid var(--border)">'+r.row+'</td><td style="padding:6px 9px;border-bottom:1px solid var(--border);font-weight:700">'+r.disc+'</td><td style="padding:6px 9px;border-bottom:1px solid var(--border)">'+(r.niv?NL[r.niv]:"—")+'</td><td style="padding:6px 9px;border-bottom:1px solid var(--border)">'+(r.trm||"—")+'</td><td style="padding:6px 9px;border-bottom:1px solid var(--border)">'+(r.dp?fD(r.dp):"—")+'</td><td style="padding:6px 9px;border-bottom:1px solid var(--border)">'+(r.pe?fD(r.pe):"—")+'</td><td style="padding:6px 9px;border-bottom:1px solid var(--border);font-size:12px">'+sit+'</td></tr>'}).join("")+'</tbody>';document.getElementById("pva").style.display="block"}
+function cImp(){const val=pImp.filter(r=>!r.errs.length&&!r.isDup);val.forEach(r=>PV.push({id:nId++,disciplina:r.disc,nivel:r.niv,turma:r.trm,dataprova:r.dp,prazoenvio:r.pe,conteudo:r.ct||"",professorId:r.prfId,status:r.status,arquivo:null}));pImp=[];document.getElementById("pva").style.display="none";rST();rP();sA("ai","✅ "+val.length+" prova"+(val.length>1?"s importadas":"importada")+" com sucesso!","aS")}
+function canImp(){pImp=[];document.getElementById("pva").style.display="none"}
+
+/* ══ ARQUIVO DA PROVA ══ */
+function selArq(id){const inp=document.createElement("input");inp.type="file";inp.accept=".pdf,.doc,.docx,.odt";inp.onchange=e=>{const f=e.target.files[0];if(!f)return;if(f.size>20*1024*1024){sA("ap2","Arquivo muito grande. Máximo 20 MB.","aE");return}const r=new FileReader();r.onload=ev=>{_arqT[id]={name:f.name,size:f.size,type:f.type,b64:ev.target.result};rzA(id)};r.readAsDataURL(f)};inp.click()}
+function rzA(id){const zone=document.getElementById("az"+id);if(!zone)return;const arq=_arqT[id]||(PV.find(x=>x.id===id)||{}).arquivo;if(arq){zone.innerHTML='<div class="farq"><div style="font-size:22px;flex-shrink:0">📄</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+arq.name+'</div><div style="font-size:11px;color:var(--text2)">'+fmtSz(arq.size)+'</div></div><button class="btn bs bd" onclick="rmA('+id+')" title="Remover">🗑</button></div>'}else{zone.innerHTML='<div class="fz" onclick="selArq('+id+')"><div style="font-size:28px;margin-bottom:6px">📎</div><p style="font-size:13px;font-weight:600;margin-bottom:2px">Clique para anexar arquivo da prova</p><p style="font-size:12px;color:var(--text2)">PDF, Word ou ODT — máx. 20 MB</p></div>'}}
+function rmA(id){delete _arqT[id];const p=PV.find(x=>x.id===id);if(p)p.arquivo=null;rzA(id)}
+function dlA(id){const p=PV.find(x=>x.id===id);if(!p||!p.arquivo)return;const a=document.createElement("a");a.href=p.arquivo.b64;a.download=p.arquivo.name;a.click()}
+
+/* ══ PROFESSOR ══ */
+function rPD(){
+  const p=logUser,mine=PV.filter(x=>x.professorId===p.id).sort((a,b)=>a.dataprova.localeCompare(b.dataprova));
+  const pend=mine.filter(x=>x.status==="aguardando"),env=mine.filter(x=>x.status!=="aguardando");
+  const el=document.getElementById("tab-prof");if(!el)return;
+  el.innerHTML=
+    '<div class="pbp"><div style="display:flex;align-items:center;gap:10px"><div class="av" style="width:38px;height:38px;background:var(--green-l);color:var(--green);font-size:13px;font-weight:700">'+ini(p.nome)+'</div><div><div style="font-size:15px;font-weight:700">'+p.nome+'</div><div style="font-size:12px;color:var(--text2)">'+(p.disciplinas||"Professor")+'</div></div></div><div style="font-size:12px;color:var(--text2)">📧 '+(p.email||"")+'</div></div>'+
+    '<div id="ap2"></div>'+
+    '<div class="stats" style="grid-template-columns:repeat(3,1fr)"><div class="stat"><div class="sn">'+mine.length+'</div><div class="sl">Minhas provas</div></div><div class="stat"><div class="sn" style="color:var(--amber)">'+pend.length+'</div><div class="sl">Pendentes</div></div><div class="stat"><div class="sn" style="color:var(--green)">'+env.length+'</div><div class="sl">Enviadas</div></div></div>'+
+    (pend.length?'<p style="font-size:14px;font-weight:700;margin-bottom:12px">⚠️ Pendentes de envio</p>'+pend.map(x=>'<div class="pc" style="border-color:'+(dD(x.prazoenvio)<0?"var(--red)":dD(x.prazoenvio)<=3?"var(--amber)":"var(--border)")+'"><div class="ph"><div><div style="font-size:15px;font-weight:700">'+x.disciplina+' — '+x.turma+'</div><div class="pmb"><span class="badge ba">Aguardando envio</span></div></div><div style="text-align:right;font-size:12px;color:var(--text2)"><div><strong>Prova:</strong> '+fD(x.dataprova)+'</div><div class="'+pCls(x.prazoenvio,"aguardando")+'"><strong>Prazo:</strong> '+fD(x.prazoenvio)+' ('+pL(x.prazoenvio)+')</div></div></div><div style="margin-bottom:10px"><label>1. Conteúdos da prova *</label><textarea id="ct'+x.id+'" placeholder="Descreva os conteúdos que serão avaliados...">'+( x.conteudo||"")+'</textarea></div><div style="margin-bottom:10px"><label>2. Arquivo da prova *</label><div id="az'+x.id+'"></div></div><button class="btn bgg" onclick="enC('+x.id+')">📤 Enviar conteúdo e arquivo</button></div>').join(""):"")    +
+    (env.length?'<p style="font-size:14px;font-weight:700;margin:16px 0 12px">✅ Enviadas</p>'+env.map(x=>{const sc=SC[x.status]||{l:x.status,c:"bgr"};return'<div class="pc"><div class="ph"><div><div style="font-size:14px;font-weight:700">'+x.disciplina+' — '+x.turma+'</div><div class="pmb"><span class="badge '+sc.c+'">'+sc.l+'</span></div></div><div style="font-size:12px;color:var(--text2)"><strong>Prova:</strong> '+fD(x.dataprova)+'</div></div>'+(x.conteudo?'<p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:10px">'+x.conteudo+'</p>':'')+'<button class="btn bs" onclick="edC('+x.id+')">✏️ Editar</button></div>'}).join(""):"")    +
+    (mine.length?"":"<div class='empty'><div class='empty-icon'>📋</div>Nenhuma prova atribuída a você ainda</div>");
+  pend.forEach(x=>rzA(x.id));
+}
+function enC(id){const ta=document.getElementById("ct"+id);if(!ta||!ta.value.trim()){sA("ap2","Preencha os conteúdos antes de enviar.","aE");return}if(!_arqT[id]){sA("ap2","Anexe o arquivo da prova antes de enviar.","aE");return}const p=PV.find(x=>x.id===id);if(p){p.conteudo=ta.value.trim();p.arquivo=_arqT[id];p.status="recebida";delete _arqT[id]}rST();sA("ap2","✅ Conteúdo e arquivo enviados com sucesso!","aS");setTimeout(()=>rPD(),500)}
+function edC(id){const p=PV.find(x=>x.id===id);if(p)p.status="aguardando";rPD()}
+
+/* ══ EMAIL ══ */
+const _EJ={sid:"",tid:"",key:"",from:"Colégio Bonaparte",reply:""};let _ejI=false;
+function svcEmail(){_EJ.sid=document.getElementById("ejs-sid").value.trim();_EJ.tid=document.getElementById("ejs-tid").value.trim();_EJ.key=document.getElementById("ejs-key").value.trim();_EJ.from=document.getElementById("ejs-from").value.trim()||"Colégio Bonaparte";_EJ.reply=document.getElementById("ejs-reply").value.trim();if(!_EJ.sid||!_EJ.tid||!_EJ.key){sA("an","Preencha Service ID, Template ID e Public Key.","aE");return}try{if(window.emailjs){window.emailjs.init({publicKey:_EJ.key});_ejI=true;sA("an","✅ Configuração salva! EmailJS pronto.","aS")}else{sA("an","⚠️ EmailJS não disponível em modo offline. Funciona quando publicado online.","aW")}}catch(e){sA("an","Erro: "+e.message,"aE")}}
+function tstEmail(){if(!_ejI){sA("an","Salve a configuração antes de testar.","aW");return}const dest=prompt("E-mail para receber o teste:");if(!dest||!dest.includes("@"))return;_sE(dest,"Teste","Prof.","Teste","6º A","01/07/2026","01/06/2026","aviso").then(()=>sA("an","✅ E-mail de teste enviado!","aS")).catch(e=>sA("an","Erro: "+(e.text||e.message),"aE"))}
+function _sE(te,tn,pn,disc,turma,dp,pi,tipo){if(!_ejI)return Promise.reject({text:"EmailJS não configurado"});return window.emailjs.send(_EJ.sid,_EJ.tid,{to_email:te,to_name:tn,prof_nome:pn,disciplina:disc,turma,data_prova:dp,prazo_info:pi,tipo:tipo==="atrasado"?"ATRASADO":tipo==="hoje"?"VENCE HOJE":"AVISO",from_name:_EJ.from,reply_to:_EJ.reply,data_envio:new Date().toLocaleDateString("pt-BR")})}
+function _pvAt(pId){return PV.filter(x=>x.professorId===pId&&x.status==="aguardando"&&dD(x.prazoenvio)<=0)}
+async function envAlerta(pId){const prof=PRO.find(p=>p.id===pId);if(!prof||!prof.email){sA("aa","Professor sem e-mail cadastrado.","aE");return}if(!_ejI){sA("aa","Configure o EmailJS na aba Notificações para enviar alertas.","aW");return}const pvs=_pvAt(pId);if(!pvs.length){sA("aa","Nenhum atraso para "+prof.nome+".","aI");return}let er=0;for(const pv of pvs){const diff=dD(pv.prazoenvio);try{await _sE(prof.email,prof.nome,prof.nome,pv.disciplina,pv.turma,fD(pv.dataprova),fD(pv.prazoenvio)+(diff<0?" ("+Math.abs(diff)+"d)":" (hoje)"),diff<0?"atrasado":"hoje")}catch(e){er++}}if(!er)sA("aa","✅ Alerta enviado para "+prof.email+"!","aS");else sA("aa","Enviado com "+er+" erro(s).","aW");rPR();rNotif()}
+async function envTodos(){if(!_ejI){sA("an","Configure o EmailJS primeiro.","aW");return}const com=PRO.filter(p=>p.email&&_pvAt(p.id).length>0);if(!com.length){sA("an","Nenhum professor com prazo vencido no momento.","aI");return}let ok=0,er=0;for(const prof of com){for(const pv of _pvAt(prof.id)){const diff=dD(pv.prazoenvio);try{await _sE(prof.email,prof.nome,prof.nome,pv.disciplina,pv.turma,fD(pv.dataprova),fD(pv.prazoenvio)+(diff<0?" ("+Math.abs(diff)+"d)":" (hoje)"),diff<0?"atrasado":"hoje");ok++}catch(e){er++}}}sA("an","✅ "+ok+" alerta(s) enviado(s)"+(er?" · "+er+" erro(s)":"")+".",er?"aW":"aS");rNotif()}
+function rNotif(){const el=document.getElementById("lista-notif");if(!el)return;const al=PV.filter(x=>x.status==="aguardando"&&dD(x.prazoenvio)<=1).sort((a,b)=>a.prazoenvio.localeCompare(b.prazoenvio));if(!al.length){el.innerHTML='<div class="empty"><div class="empty-icon">✅</div><p style="color:var(--green);font-weight:700">Sem atrasos!</p><p>Todos os professores estão dentro do prazo.</p></div>';return}el.innerHTML=al.map(pv=>{const prof=PRO.find(p=>p.id===pv.professorId),diff=dD(pv.prazoenvio);const tag=diff<0?'<span class="tag-at">'+Math.abs(diff)+'d de atraso</span>':diff===0?'<span class="tag-hj">Vence hoje</span>':'<span class="tag-ok">Vence amanhã</span>';return'<div class="notif-row"><div><div style="font-size:14px;font-weight:700">'+pv.disciplina+' — '+pv.turma+'</div><div style="font-size:12px;color:var(--text2);margin-top:3px">'+(prof?prof.nome:"—")+(prof&&prof.email?' · 📧 '+prof.email:' · sem e-mail')+'</div><div style="font-size:12px;color:var(--text2);margin-top:2px">📅 Prova: '+fD(pv.dataprova)+' · ⏰ Prazo: '+fD(pv.prazoenvio)+'</div></div><div class="bg3">'+tag+(prof&&prof.email?'<button class="btn bs bp" onclick="envAlerta('+pv.professorId+')">📨 Notificar</button>':'<span style="font-size:11px;color:var(--red)">sem e-mail</span>')+'</div></div>'}).join("")}
+function cCfg(){if(_EJ.sid)document.getElementById("ejs-sid").value=_EJ.sid;if(_EJ.tid)document.getElementById("ejs-tid").value=_EJ.tid;if(_EJ.key)document.getElementById("ejs-key").value=_EJ.key;if(_EJ.from)document.getElementById("ejs-from").value=_EJ.from;if(_EJ.reply)document.getElementById("ejs-reply").value=_EJ.reply}
+function chkAt(){const t=PV.filter(x=>x.status==="aguardando"&&dD(x.prazoenvio)<=0).length;const tabs=document.querySelectorAll("#app-tabs .tab");tabs.forEach(tb=>{if(tb.textContent.includes("Notificações")){tb.innerHTML=t>0?'🔔 <span style="color:var(--red)">Notificações</span> <span style="background:var(--red);color:#fff;border-radius:20px;padding:1px 7px;font-size:11px;font-weight:700;margin-left:2px">'+t+'</span>':'🔔 Notificações'}})}
+
+/* ══ CALENDÁRIO ══ */
+function rC(){const el=document.getElementById("tab-cal");if(!el)return;const ms=["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];const por={};PV.forEach(p=>{const d=new Date(p.dataprova+"T00:00:00");const k=d.getFullYear()+"-"+String(d.getMonth()).padStart(2,"0");if(!por[k])por[k]={label:ms[d.getMonth()]+" "+d.getFullYear(),items:[]};por[k].items.push(p)});const keys=Object.keys(por).sort();el.innerHTML='<div style="padding-top:20px">'+(keys.length?keys.map(k=>{const g=por[k];return'<div style="margin-bottom:24px"><p style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px">'+g.label+'</p>'+g.items.slice().sort((a,b)=>a.dataprova.localeCompare(b.dataprova)).map(p=>{const d=new Date(p.dataprova+"T00:00:00");const sc=SC[p.status]||{l:p.status,c:"bgr"};return'<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);flex-wrap:wrap"><span style="min-width:32px;font-size:20px;font-weight:700;color:var(--blue)">'+String(d.getDate()).padStart(2,"0")+'</span><span style="flex:1;font-size:14px;font-weight:600;min-width:100px">'+p.disciplina+' — '+p.turma+'</span><span class="badge bgr" style="font-size:10px">'+(NL[p.nivel]||"")+'</span><span class="badge '+sc.c+'" style="font-size:10px">'+sc.l+'</span><span style="font-size:12px;color:var(--text2)">Envio: '+fD(p.prazoenvio)+'</span></div>'}).join("")+'</div>'}).join(""):'<div class="empty"><div class="empty-icon">📅</div>Nenhuma prova cadastrada</div>')+'</div>'}
+
+/* ══ ALUNO ══ */
+function buildAluno(){
+  const mk=(t,cid)=>{const b=document.createElement("button");b.className="btn bs"+(t===selTA?" bp":"");b.textContent=t;b.onclick=()=>{selTA=t;rAL()};document.getElementById(cid).appendChild(b)};
+  document.getElementById("tsf").innerHTML="";document.getElementById("tsm").innerHTML="";
+  TM.fund.forEach(t=>mk(t,"tsf"));TM.medio.forEach(t=>mk(t,"tsm"));
+  rAL();
+}
+function rAL(){
+  document.querySelectorAll("#tsf .btn,#tsm .btn").forEach(b=>b.classList.toggle("bp",b.textContent===selTA));
+  const todas=PV.filter(p=>p.turma===selTA).sort((a,b)=>a.dataprova.localeCompare(b.dataprova));
+  const ms=["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+  const el=document.getElementById("av");
+  if(!todas.length){el.innerHTML='<div class="empty"><div class="empty-icon">😕</div>Nenhuma prova agendada para esta turma ainda</div>';return}
+  el.innerHTML='<div style="padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);font-size:13px;color:var(--text2);margin-bottom:16px">Ensino '+NL[nT(selTA)]+' — Turma <strong style="color:var(--text)">'+selTA+'</strong> — '+todas.length+' prova'+(todas.length>1?"s":"")+'</div>'+todas.map(p=>{const d=new Date(p.dataprova+"T00:00:00"),diff=dD(p.dataprova);const ub=diff>=0&&diff<=7?'<span class="badge ba">em '+diff+' dias</span>':(diff<0?'<span class="badge br">passou</span>':'<span class="badge bG">'+diff+' dias</span>');return'<div class="tl"><div class="tld"><div class="tday">'+String(d.getDate()).padStart(2,"0")+'</div><div class="tmo">'+ms[d.getMonth()]+'</div></div><div class="tlb"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap"><span style="font-size:15px;font-weight:700">'+p.disciplina+'</span>'+ub+'</div>'+(p.conteudo?'<p style="font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:5px"><strong style="color:var(--text)">Conteúdos:</strong> '+p.conteudo+'</p>':'<p style="font-size:14px;color:var(--amber)">⏳ Conteúdos em breve</p>')+'<p style="font-size:12px;color:var(--text2)">'+pN(p.professorId)+'</p></div></div>'}).join("")}
+</script>
+</body>
+</html>
